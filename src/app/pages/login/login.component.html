@@ -5,15 +5,15 @@
       <p>Insira suas credenciais para acessar</p>
     </div>
 
-    <form>
+    <form #loginFRM="ngForm" (ngSubmit)="login()">
       <div class="input-group">
         <label for="email">Email</label>
-        <input type="email" id="email" placeholder="seu@email.com" required>
+        <input [(ngModel)]="loginMap.email" name="email" type="email" id="email" placeholder="seu@email.com" required>
       </div>
 
       <div class="input-group">
         <label for="password">Senha</label>
-        <input type="password" id="password" placeholder="••••••••" required>
+        <input [(ngModel)]="loginMap.password" name="password" type="password" id="password" placeholder="••••••••" required>
       </div>
 
       <button type="submit" class="btn-primary">Entrar</button>

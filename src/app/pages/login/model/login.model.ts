@@ -1,4 +1,4 @@
-export interface LoginDTO{
-    email: String;
-    password: String;
+export class LoginDTO{
+    email?: String;
+    password?: String;
 }

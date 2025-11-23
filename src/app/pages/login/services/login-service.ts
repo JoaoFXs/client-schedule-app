@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 export class LoginService {
 
   constructor(private http: HttpClient) { }
-  private readonly baseUrl = 'http://localhost/api/'
+  private readonly baseUrl = 'http://localhost:8080/api/'
 
   login(dados: LoginDTO): Observable<LoginDTO>{
     console.log("Dados antes de enviar", dados)
