@@ -1,0 +1,21 @@
+<header>
+  <mat-toolbar class="toolbar">
+    <button matIconButton class="icon"  [matMenuTriggerFor]="menu">
+          <mat-icon>menu</mat-icon>
+    </button>
+    <span>Sistema de Agendamento</span>
+    <span class="spacer"></span>
+    <button matIconButton class="icon favorite-icon" (click)="redirectLogin()">
+      <mat-icon>person</mat-icon>
+    </button>
+    <button matIconButton class="icon">
+      <mat-icon>share</mat-icon>
+    </button>
+  </mat-toolbar>
+
+    <mat-menu #menu="matMenu" class="menu-drop">
+      <button mat-menu-item class="button-menu"><mat-icon>cases</mat-icon>Planos/Preços</button>
+      <button mat-menu-item class="button-menu"> <mat-icon>alarm</mat-icon>Quero Agendar</button>
+    </mat-menu>
+
+</header>

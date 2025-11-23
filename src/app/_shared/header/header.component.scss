@@ -1,0 +1,58 @@
+/* Variáveis para facilitar manutenção */
+@use '@angular/material' as mat;
+
+:root {
+  --primary-bg: rgb(155, 192, 209);
+  --primary-text: rgb(3, 57, 82);
+  --hover-bg: rgba(255, 255, 255, 0.3); /* Branco transparente para hover */
+  
+}
+
+.toolbar {
+  /* Layout */
+  display: flex; /* Essencial para o .spacer funcionar */
+  align-items: center; /* Centraliza itens verticalmente */
+  gap: 8px; /* Espaço entre os ícones */
+  
+  /* Visual */
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  padding: 0 16px; /* Mais respiro nas laterais */
+  height: 64px; /* Altura padrão de barras modernas */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave para dar profundidade */
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.icon {
+  /* Reset e Cores */
+  background-color: transparent; /* Fundo transparente fica mais elegante */
+  color: var(--primary-text);
+  border: none;
+  cursor: pointer;
+  
+  /* Tamanho e Forma */
+  width: 40px; /* Tamanho fixo para área de clique */
+  height: 40px;
+  border-radius: 50%; /* Botão totalmente redondo (círculo) */
+  
+  /* Centralizar o ícone dentro do botão */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* A Mágica: Transição Suave */
+  transition: all 0.2s ease-in-out;
+}
+
+.icon:hover {
+  background-color: var(--hover-bg); /* Clareia o fundo ao passar o mouse */
+  transform: translateY(-2px); /* Leve subida (efeito flutuante) */
+}
+
+.icon:active {
+  transform: scale(0.95); /* Efeito de clique (encolhe um pouco) */
+}
+
