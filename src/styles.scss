@@ -11,4 +11,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     container-shape: 10px,
     item-label-text-size: 15px
   ));
+
+   @include mat.sidenav-overrides((
+    content-background-color: transparent,
+    container-width: 300px
+  ));
 }

@@ -11,6 +11,6 @@ export interface TokenPayload{
   sub: string;       // Geralmente é o email ou username (subject)
   exp: number;       // Data de expiração
   role?: string[];     
-  nome?: string;     
+  name?: string;     
 }
 

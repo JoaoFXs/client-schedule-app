@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LoginService } from '../../pages/login/services/login-service';
 
 
 @Component({
@@ -8,13 +9,26 @@ import { Router } from '@angular/router';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit{
   showFiller = false;
+  loggedIn = true;
+  username: string | undefined = '';
+  email: string | undefined = '';
+  
+  ngOnInit(): void {
+    const dados = this.login.getDadosUsuario();
+    console.log("DADOS", dados);
+    this.username = dados?.name;
+    this.email = dados?.sub;
+  }
 
   constructor(
-    private router: Router
+    private router: Router,
+    private login: LoginService
   ){
   }
+  
+ 
   redirectLogin(){
     this.router.navigate(['/login']);
   }

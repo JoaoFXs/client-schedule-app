@@ -47,7 +47,8 @@
   transition: all 0.2s ease-in-out;
 }
 
-.icon:hover {
+.person-icon:hover,
+.share-icon:hover {
   background-color: var(--hover-bg); /* Clareia o fundo ao passar o mouse */
   transform: translateY(-2px); /* Leve subida (efeito flutuante) */
 }
@@ -55,4 +56,42 @@
 .icon:active {
   transform: scale(0.95); /* Efeito de clique (encolhe um pouco) */
 }
+
+.drawer-content{
+  height: 100px;
+  word-spacing: -5px;
+}
+
+.drawer-content .username{
+  margin: 0;          /* Remove o espaço externo */
+  margin-top: 5px;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.2;   /* Define a altura da linha bem justa */
+  display: block;     /* Garante que quebre a linha */
+}
+
+.drawer-content .email{
+  margin: 0;          /* Remove o espaço externo */
+  padding: 0;
+  font-size: 12px;    /* Email geralmente é menor */
+  color: #ccc;        /* Cor mais clara para dar hierarquia (opcional) */
+  line-height: 1.2;   /* Define a altura da linha bem justa */
+  display: block;
+}
+
+/* Nova classe para o botão de Logout */
+.logout-btn {
+  position: absolute; /* Remove o botão do fluxo do texto */
+  right: 5px;        /* Cola ele na direita */        /* Coloca no meio da altura */
+  transform: translateY(-90%); /* Garante o centro exato vertical */
+
+}
+
+.logout-btn:hover {
+  background-color: var(--hover-bg); /* Clareia o fundo ao passar o mouse */
+  transform: translateY(-95%); /* Leve subida (efeito flutuante) */
+}
+
+
 
