@@ -1,12 +1,12 @@
 import { NgModule } from "@angular/core";
 import { LoginComponent } from "./login.component";
-import { HeaderComponent } from "../../_shared/header/header.component";
 import { CommonsImports } from "../../_shared/commons_imports/commonsImports.module";
+import { FormsModule } from "@angular/forms";
 
 @NgModule({
-    declarations: [LoginComponent],
+    declarations: [],
     imports: [CommonsImports],
-    exports: [LoginComponent],
+    exports: [],
     providers: []
 })
 export class LoginModule{

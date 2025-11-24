@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
-import { LoginDTO } from './model/login.model';
+import { LoginDTO, TokenDTO } from './model/login.model';
 import { LoginService } from './services/login-service';
 import { FormsModule } from '@angular/forms';
+import { MatSnackBar } from  '@angular/material/snack-bar';
+import { timeout } from 'rxjs';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -11,24 +14,38 @@ import { FormsModule } from '@angular/forms';
 })
 export class LoginComponent {
   loginMap: LoginDTO = { email: '', password: '' };
+  tokenMap: TokenDTO = { token: '' };
 
   constructor(
-    private loginService: LoginService
+    private loginService: LoginService,
+    private snack: MatSnackBar
   ){
   }
 
-  login(){
+  public login(){
     this.loginService.login(this.loginMap).subscribe(
       {
        next: (resposta) => {
-        console.log('Sucesso!', resposta);
-        alert('Logado!');
+        this.loginMap = new LoginDTO();
+        console.log(resposta);
+        this.tokenMap = (resposta as TokenDTO);
+        localStorage.setItem('token', JSON.stringify(this.tokenMap.token));
+        this.showMessage('Login realizado com sucesso!', 'OK');
       },
       error: (erro) => {
-        console.error('Deu ruim:', erro);
+        this.showMessage('Email ou senha incorretos, tente novamente', 'X');
         alert('Erro ao agendar.');
       }
       }
     )
   }
+
+  public showMessage(message: string, action?: string){
+    this.snack.open(message, action,{
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
+  }
+
 }
