@@ -34,7 +34,6 @@ export class LoginComponent {
       },
       error: (erro) => {
         this.showMessage('Email ou senha incorretos, tente novamente', 'X');
-        alert('Erro ao agendar.');
       }
       }
     )

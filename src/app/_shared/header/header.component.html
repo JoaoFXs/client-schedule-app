@@ -5,9 +5,29 @@
     </button>
     <span>Sistema de Agendamento</span>
     <span class="spacer"></span>
-    <button matIconButton class="icon favorite-icon" (click)="redirectLogin()">
-      <mat-icon>person</mat-icon>
-    </button>
+    <mat-drawer-container class="example-container" autosize>
+      
+          <mat-drawer #drawer class="example-sidenav" mode="side">
+                <p>Auto-resizing sidenav</p>
+                @if (showFiller) {
+                  <p>Lorem, ipsum dolor sit amet consectetur.</p>
+                }
+                <button (click)="showFiller = !showFiller" matButton="elevated">
+                  Toggle extra text
+                </button>
+          </mat-drawer>
+
+          <div class="example-sidenav-content">
+            <button type="button" matButton (click)="drawer.toggle()">
+              Toggle sidenav
+            </button>
+          </div>
+
+          <button matIconButton class="icon favorite-icon" (click)="redirectLogin()">
+            <mat-icon>person</mat-icon>
+          </button>
+    </mat-drawer-container>
+   
     <button matIconButton class="icon">
       <mat-icon>share</mat-icon>
     </button>
