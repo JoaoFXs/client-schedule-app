@@ -7,8 +7,7 @@ import { timeout } from 'rxjs';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [FormsModule],
+  standalone: false,
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

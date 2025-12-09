@@ -11,13 +11,14 @@ import { LoginService } from '../../pages/login/services/login-service';
 })
 export class HeaderComponent implements OnInit{
   showFiller = false;
-  loggedIn = true;
+  loggedIn = false;
   username: string | undefined = '';
   email: string | undefined = '';
   
   ngOnInit(): void {
     const dados = this.login.getDadosUsuario();
     console.log("DADOS", dados);
+    console.log(this.loggedIn)
     this.username = dados?.name;
     this.email = dados?.sub;
   }
@@ -30,6 +31,7 @@ export class HeaderComponent implements OnInit{
   
  
   redirectLogin(){
+    console.log("redirectLogin");
     this.router.navigate(['/login']);
   }
 
