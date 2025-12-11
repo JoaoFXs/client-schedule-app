@@ -1,6 +1,8 @@
 export class LoginDTO{
     email?: String;
     password?: String;
+    cpf?: String;
+    passwordConfirmation?: String;
 }
 
 export class TokenDTO{

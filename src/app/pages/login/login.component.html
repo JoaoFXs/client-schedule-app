@@ -5,18 +5,45 @@
       <p>Insira suas credenciais para acessar</p>
     </div>
 
-    <form #loginFRM="ngForm" (ngSubmit)="login()">
+    <form #loginFRM="ngForm" (ngSubmit)="login()" [formGroup]="loginForm">
       <div class="input-group">
         <label for="email">Email</label>
-        <input [(ngModel)]="loginMap.email" name="email" type="email" id="email" placeholder="seu@email.com" required>
+        <input name="email" type="email" id="email" placeholder="seu@email.com" formControlName="email" required>
+        <div *ngIf="email.invalid && loginFRM.submitted" class="validation-error">
+            <p *ngIf="email.errors?.['required']">O email é obrigatório</p>
+            <p *ngIf="email.errors?.['email']">O email deve seguir o padrão de email</p>
+        </div>
       </div>
 
       <div class="input-group">
         <label for="password">Senha</label>
-        <input [(ngModel)]="loginMap.password" name="password" type="password" id="password" placeholder="••••••••" required>
+        <input name="password" type="password" id="password" placeholder="••••••••" formControlName="password" required>
+        <div *ngIf="password.invalid && loginFRM.submitted" class="validation-error">
+             <p *ngIf="password.errors?.['required']">A senha é obrigatória</p>
+        </div>
       </div>
 
-      <button type="submit" class="btn-primary">Entrar</button>
+      <div class="input-group">
+        <label for="password">Confirme sua Senha</label>
+        <input name="passwordConfirmation" type="password" id="passwordConfirmation" placeholder="••••••••" formControlName="passwordConfirmation" required>
+        <div *ngIf="passwordConfirmation.invalid && loginFRM.submitted" class="validation-error">
+            <p *ngIf="passwordConfirmation.errors?.['required']">Confirmação da senha é obrigatório</p>
+        </div>
+        <div *ngIf="loginForm.errors?.['mismatch'] && loginForm.touched">
+            <p>As senhas não conferem</p>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="cpf">CPF</label>
+        <input name="cpf" mask="000.000.000-00" id="cpf" placeholder="Digite seu CPF" formControlName="cpf" required/>
+        <div *ngIf="cpf.invalid && loginFRM.submitted" class="validation-error">
+              <p *ngIf="cpf.errors?.['required']">CPF é obrigatório</p>
+        </div>
+      </div>
+
+     <!-- <button type="submit" class="btn-primary">Entrar</button> -->
+      <button type="submit" class="btn-primary">Cadastrar</button>
     </form>
 
     <div class="actions">

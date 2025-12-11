@@ -11,12 +11,19 @@ export class LoginService {
 
   constructor(private http: HttpClient) { }
   private readonly baseUrl = 'http://localhost:8080/api/'
+  private loggedIn: boolean = false;
+
 
   login(dados: LoginDTO): Observable<LoginDTO>{
     console.log("Dados antes de enviar", dados)
     return this.http.post<LoginDTO>(`${this.baseUrl}auth/login`, dados);
   }
 
+  register(dados: LoginDTO): Observable<LoginDTO>{
+    console.log("Dados antes do cadastro:", dados);
+    return this.http.post<LoginDTO>(`${this.baseUrl}auth/register`, dados);
+  }
+  
   getDadosUsuario(): TokenPayload | null{
     const token = localStorage.getItem('token');
 
@@ -37,5 +44,13 @@ export class LoginService {
     return dados?.role?.includes("ADMIN");
   }
 
+  verifyIfLoggedIn(): boolean{
+    const token = localStorage.getItem('token');  
+    return !!token;  
+  }
+
+  logout(){
+    localStorage.removeItem('token');
+  } 
 
 }

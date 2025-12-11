@@ -9,6 +9,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { Router } from "@angular/router";
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 @NgModule({
     declarations: [],
     imports: [CommonModule,
@@ -19,7 +20,8 @@ import { Router } from "@angular/router";
               MatToolbarModule,
               MatMenuModule,
             MatSidenavModule,
-            FormsModule
+            FormsModule,
+            NgxMaskDirective
               ],
     exports: [CommonModule, 
               RouterModule, 
@@ -29,9 +31,10 @@ import { Router } from "@angular/router";
               MatToolbarModule,
             MatMenuModule,
           MatSidenavModule,
-          FormsModule
+          FormsModule,
+          NgxMaskDirective
         ],
-    providers: []
+    providers: [provideNgxMask()]
 })
 export class CommonsImports {
 

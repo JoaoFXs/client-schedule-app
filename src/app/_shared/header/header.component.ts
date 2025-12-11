@@ -11,21 +11,20 @@ import { LoginService } from '../../pages/login/services/login-service';
 })
 export class HeaderComponent implements OnInit{
   showFiller = false;
-  loggedIn = false;
+
   username: string | undefined = '';
   email: string | undefined = '';
   
   ngOnInit(): void {
-    const dados = this.login.getDadosUsuario();
+    const dados = this.loginService.getDadosUsuario();
     console.log("DADOS", dados);
-    console.log(this.loggedIn)
     this.username = dados?.name;
     this.email = dados?.sub;
   }
 
   constructor(
     private router: Router,
-    private login: LoginService
+    public loginService: LoginService
   ){
   }
   
