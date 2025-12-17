@@ -145,3 +145,19 @@
       color: var(--primary-text);
       cursor: pointer;
     }
+
+.password-requirements p {
+  color: #888; /* Cinza para o que ainda não foi preenchido */
+  font-size: 0.9rem;
+  margin: 4px 0;
+  transition: color 0.3s ease;
+}
+
+.password-requirements p.valid {
+  color: #28a745; /* Verde quando válido */
+  font-weight: 500;
+}
+
+.icon {
+  margin-right: 8px;
+}

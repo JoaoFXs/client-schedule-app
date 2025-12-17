@@ -21,6 +21,12 @@ export class LoginComponent {
   // Regex que exige: 1 maiúscula, 1 minúscula, 1 número, 1 especial, e mínimo 8 caracteres.
   complexPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
 
+  // Regex que exige
+  complexNameRegex = /^(?![ ])(?!.*[ ]{2})((?:e|da|do|das|dos|de|d'|D'|la|las|el|los)\s*?|(?:[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð'][^\s]*\s*?)(?!.*[ ]$))+$/;
+  
+  // Regex que exige
+  complexEmailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i;
+
   constructor(
     private loginService: LoginService,
     private snack: MatSnackBar,
@@ -30,10 +36,12 @@ export class LoginComponent {
 
   ngOnInit(){
     this.loginForm = new FormGroup({
-        email: new FormControl('',[Validators.email, Validators.required]),
+        email: new FormControl('',[Validators.email, Validators.required, Validators.pattern(this.complexEmailRegex)]),
+        phone: new FormControl('',[Validators.required]),
         password: new FormControl('',[Validators.required,Validators.minLength(12), Validators.maxLength(50), Validators.pattern(this.complexPasswordRegex)]),
         passwordConfirmation: new FormControl('',[Validators.required]),
-        cpf: new FormControl('',[Validators.required])
+        cpf: new FormControl('',[Validators.required]),
+        username: new FormControl('',[Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.complexNameRegex)]) //
     }, {
       validators: matchPasswordValidator
     });
@@ -47,6 +55,7 @@ export class LoginComponent {
     this.loginMap = this.loginForm.value;
     
     if(this.loginMap.cpf){
+      console.log("Registrando usuario")
           this.loginService.register(this.loginMap).subscribe(
             {
               next: (resposta) =>{
@@ -82,7 +91,10 @@ export class LoginComponent {
       verticalPosition: 'top'
     });
   }
-
+    hasUpperCase(val: string) { return /[A-Z]/.test(val); }
+    hasLowerCase(val: string) { return /[a-z]/.test(val); }
+    hasNumber(val: string) { return /[0-9]/.test(val); }
+    hasSpecial(val: string) { return /[!@#$%^&*]/.test(val); }
   
   get email(){
     return this.loginForm.get('email')!;
@@ -90,6 +102,14 @@ export class LoginComponent {
 
   get password(){
     return this.loginForm.get('password')!;
+  }
+
+  get phone(){
+    return this.loginForm.get('phone');
+  }
+
+  get username(){
+    return this.loginForm.get('username');
   }
 
     get passwordConfirmation(){

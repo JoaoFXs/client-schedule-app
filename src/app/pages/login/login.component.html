@@ -6,12 +6,24 @@
     </div>
 
     <form #loginFRM="ngForm" (ngSubmit)="login()" [formGroup]="loginForm">
+
+      <div class="input-group">
+        <label for="username">Nome</label>
+        <input name="username" type="text" id="username" placeholder="Digite seu nome" formControlName="username" required>
+        <div *ngIf="username?.invalid && loginFRM.submitted" class="validation-error">
+            <p *ngIf="username?.errors?.['required']">O nome é obrigatório</p>
+        </div>
+        <div *ngIf="username?.errors?.['pattern']" class="validation-error">
+            <strong>Nome inválido.</strong> Evite números, símbolos ou letras aleatórias. 
+        </div>
+      </div>
+
       <div class="input-group">
         <label for="email">Email</label>
         <input name="email" type="email" id="email" placeholder="seu@email.com" formControlName="email" required>
         <div *ngIf="email.invalid && loginFRM.submitted" class="validation-error">
             <p *ngIf="email.errors?.['required']">O email é obrigatório</p>
-            <p *ngIf="email.errors?.['email']">O email deve seguir o padrão de email</p>
+            <p *ngIf="email.errors?.['email'] || email.errors?.['pattern']">Formato de email inválido (exemplo&#64;dominio.com)</p>
         </div>
       </div>
 
@@ -21,6 +33,34 @@
         <div *ngIf="password.invalid && loginFRM.submitted" class="validation-error">
              <p *ngIf="password.errors?.['required']">A senha é obrigatória</p>
         </div>
+         <div *ngIf="password.errors?.['pattern']">
+           <div class="password-requirements">
+              <p [class.valid]="loginForm.get('password')?.value?.length >= 8">
+                <span class="icon">{{ loginForm.get('password')?.value?.length >= 8 ? 'X' : '○' }}</span>
+                Pelo menos 8 caracteres
+              </p>
+              
+              <p [class.valid]="hasUpperCase(loginForm.get('password')?.value)">
+                <span class="icon">{{ hasUpperCase(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
+                Uma letra maiúscula
+              </p>
+
+              <p [class.valid]="hasLowerCase(loginForm.get('password')?.value)">
+                <span class="icon">{{ hasLowerCase(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
+                Uma letra minúscula
+              </p>
+
+              <p [class.valid]="hasNumber(loginForm.get('password')?.value)">
+                <span class="icon">{{ hasNumber(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
+                Um número
+              </p>
+
+              <p [class.valid]="hasSpecial(loginForm.get('password')?.value)">
+                <span class="icon">{{ hasSpecial(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
+                Um símbolo (ex: &#64;, #, $)
+              </p>
+            </div>
+          </div>
       </div>
 
       <div class="input-group">
@@ -31,6 +71,14 @@
         </div>
         <div *ngIf="loginForm.errors?.['mismatch'] && loginForm.touched">
             <p>As senhas não conferem</p>
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label for="phone">Celular</label>
+        <input name="phone" mask="(00)00000-0000" id="phone" placeholder="Digite seu numero de celular" formControlName="phone" required>
+        <div *ngIf="phone?.invalid && loginFRM.submitted" class="validation-error">
+            <p *ngIf="phone?.errors?.['required']">Numero de celular é obrigatório</p>
         </div>
       </div>
 
