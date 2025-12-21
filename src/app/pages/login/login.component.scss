@@ -99,7 +99,6 @@
     }
 
     .btn-primary:hover {
-      background-color: rgb(5, 75, 105); /* Um pouco mais claro/vivo */
       transform: translateY(-2px); /* Efeito flutuante */
       box-shadow: 0 4px 12px rgba(3, 57, 82, 0.3);
     }
@@ -108,6 +107,14 @@
       transform: scale(0.98);
     }
 
+    .btn-primary.login-btn:hover{
+      background-color: rgb(5, 75, 105); 
+    }
+
+    .btn-primary.cancel-btn:hover{
+      background-color: rgb(141, 10, 10);
+    }
+    
     /* 6. Links (Esqueci senha / Novo usuário) */
     .actions {
       margin-top: 24px;

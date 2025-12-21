@@ -25,7 +25,7 @@ export class LoginComponent {
   complexNameRegex = /^(?![ ])(?!.*[ ]{2})((?:e|da|do|das|dos|de|d'|D'|la|las|el|los)\s*?|(?:[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð'][^\s]*\s*?)(?!.*[ ]$))+$/;
   
   // Regex que exige
-  complexEmailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i;
+  complexEmailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
 
   constructor(
     private loginService: LoginService,
@@ -91,10 +91,15 @@ export class LoginComponent {
       verticalPosition: 'top'
     });
   }
-    hasUpperCase(val: string) { return /[A-Z]/.test(val); }
-    hasLowerCase(val: string) { return /[a-z]/.test(val); }
-    hasNumber(val: string) { return /[0-9]/.test(val); }
-    hasSpecial(val: string) { return /[!@#$%^&*]/.test(val); }
+
+   public cleanForm(){
+    this.loginForm.reset();
+  }
+
+  hasUpperCase(val: string) { return /[A-Z]/.test(val); }
+  hasLowerCase(val: string) { return /[a-z]/.test(val); }
+  hasNumber(val: string) { return /[0-9]/.test(val); }
+  hasSpecial(val: string) { return /[!@#$%^&*]/.test(val); }
   
   get email(){
     return this.loginForm.get('email')!;
