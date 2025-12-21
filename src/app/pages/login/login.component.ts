@@ -26,7 +26,8 @@ export class LoginComponent {
   
   // Regex que exige
   complexEmailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
-
+  
+  loginState: boolean = true;
   constructor(
     private loginService: LoginService,
     private snack: MatSnackBar,
@@ -36,35 +37,40 @@ export class LoginComponent {
 
   ngOnInit(){
     this.loginForm = new FormGroup({
-        email: new FormControl('',[Validators.email, Validators.required, Validators.pattern(this.complexEmailRegex)]),
-        phone: new FormControl('',[Validators.required]),
-        password: new FormControl('',[Validators.required,Validators.minLength(12), Validators.maxLength(50), Validators.pattern(this.complexPasswordRegex)]),
-        passwordConfirmation: new FormControl('',[Validators.required]),
-        cpf: new FormControl('',[Validators.required]),
-        username: new FormControl('',[Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.complexNameRegex)]) //
-    }, {
-      validators: matchPasswordValidator
+        email: new FormControl(''),
+        phone: new FormControl(''),
+        password: new FormControl(''),
+        passwordConfirmation: new FormControl(''),
+        cpf: new FormControl(''),
+        username: new FormControl('') //
     });
   }
 
+  
+
 
   public login(){
+    this.setValidators()
+        console.log("LOGIN STATE", this.loginState)
     if(this.loginForm.invalid){
       return;
     }
+
     this.loginMap = this.loginForm.value;
     
-    if(this.loginMap.cpf){
+    if(!this.loginState){
       console.log("Registrando usuario")
           this.loginService.register(this.loginMap).subscribe(
             {
               next: (resposta) =>{
                   this.loginMap = new LoginDTO();
                   console.log(resposta);
+                      this.loginState = true
                   this.router.navigateByUrl("/login");
               }
             }
           )
+      
     }else{
         console.log(this.loginMap)
             this.loginService.login(this.loginMap).subscribe(
@@ -75,6 +81,8 @@ export class LoginComponent {
                 this.tokenMap = (resposta as TokenDTO);
                 localStorage.setItem('token', JSON.stringify(this.tokenMap.token));
                 this.showMessage('Login realizado com sucesso!', 'OK');
+                this.loginState = true
+                this.router.navigateByUrl("/");
               },
               error: (erro) => {
                 this.showMessage('Email ou senha incorretos, tente novamente', 'X');
@@ -101,6 +109,52 @@ export class LoginComponent {
   hasNumber(val: string) { return /[0-9]/.test(val); }
   hasSpecial(val: string) { return /[!@#$%^&*]/.test(val); }
   
+  setValidators(){      
+        const emailControl = this.loginForm.get('email');
+        const passControl = this.loginForm.get('password');
+        const passConfirmationControl = this.loginForm.get('passwordConfirmation');
+        const phoneControl = this.loginForm.get('phone');
+        const usernameControl = this.loginForm.get('username');
+        const cpfControl = this.loginForm.get('cpf');
+
+        if (this.loginState) {
+          // Estado de Login: Remove ou simplifica validações
+          emailControl?.setValidators([Validators.required, Validators.email]);
+          passControl?.setValidators([Validators.required]);
+          passConfirmationControl?.clearValidators();
+          phoneControl?.clearValidators();
+          usernameControl?.clearValidators();
+          cpfControl?.clearValidators();
+          this.loginForm.clearValidators();
+
+        } else {
+          // Estado de Cadastro (loginState false): Validações complexas
+          emailControl?.setValidators([Validators.required, Validators.email, Validators.pattern(this.complexEmailRegex)]);
+          passControl?.setValidators([Validators.required, Validators.minLength(12), Validators.pattern(this.complexPasswordRegex)]);
+          passConfirmationControl?.setValidators([Validators.required]);
+          phoneControl?.setValidators([Validators.required]);
+          usernameControl?.setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.complexNameRegex)]);
+          cpfControl?.setValidators([Validators.required]);
+          this.loginForm.setValidators(matchPasswordValidator);
+        }
+
+        // ESSENCIAL: Avisa o Angular para checar os campos agora
+        emailControl?.updateValueAndValidity();
+        passControl?.updateValueAndValidity();
+        passConfirmationControl?.updateValueAndValidity();
+        phoneControl?.updateValueAndValidity();
+        usernameControl?.updateValueAndValidity();
+        cpfControl?.updateValueAndValidity();
+
+        // Inverte o estado
+        this.loginForm.updateValueAndValidity();
+  }
+
+
+  changeValidatorsAndState(){
+    this.setValidators();
+    this.loginState = !this.loginState;
+  }
   get email(){
     return this.loginForm.get('email')!;
   }

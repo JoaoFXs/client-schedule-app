@@ -7,7 +7,7 @@
 
     <form #loginFRM="ngForm" (ngSubmit)="login()" [formGroup]="loginForm">
 
-      <div class="input-group">
+      <div class="input-group" *ngIf="!loginState">
         <label for="username">Nome</label>
         <input name="username" type="text" id="username" placeholder="Digite seu nome" formControlName="username" required>
         <div *ngIf="username?.invalid && loginFRM.submitted" class="validation-error">
@@ -33,7 +33,7 @@
         <div *ngIf="password.invalid && loginFRM.submitted" class="validation-error">
              <p *ngIf="password.errors?.['required']">A senha é obrigatória</p>
         </div>
-         <div *ngIf="password.errors?.['pattern']">
+         <div *ngIf="password.errors?.['pattern'] && !loginState">
            <div class="password-requirements">
               <p [class.valid]="loginForm.get('password')?.value?.length >= 8">
                 <span class="icon">{{ loginForm.get('password')?.value?.length >= 8 ? 'X' : '○' }}</span>
@@ -63,7 +63,7 @@
           </div>
       </div>
 
-      <div class="input-group">
+      <div class="input-group" *ngIf="!loginState">
         <label for="password">Confirme sua Senha</label>
         <input name="passwordConfirmation" type="password" id="passwordConfirmation" placeholder="••••••••" formControlName="passwordConfirmation" required>
         <div *ngIf="passwordConfirmation.invalid && loginFRM.submitted" class="validation-error">
@@ -74,7 +74,7 @@
         </div>
       </div>
       
-      <div class="input-group">
+      <div class="input-group" *ngIf="!loginState">
         <label for="phone">Celular</label>
         <input name="phone" mask="(00)00000-0000" id="phone" placeholder="Digite seu numero de celular" formControlName="phone" required>
         <div *ngIf="phone?.invalid && loginFRM.submitted" class="validation-error">
@@ -82,7 +82,7 @@
         </div>
       </div>
 
-      <div class="input-group">
+      <div class="input-group" *ngIf="!loginState">
         <label for="cpf">CPF</label>
         <input name="cpf" mask="000.000.000-00" id="cpf" placeholder="Digite seu CPF" formControlName="cpf" required/>
         <div *ngIf="cpf.invalid && loginFRM.submitted" class="validation-error">
@@ -91,19 +91,29 @@
       </div>
 
      <!-- <button type="submit" class="btn-primary">Entrar</button> -->
-      <button type="submit" class="btn-primary login-btn">Cadastrar</button>
+      @if(!loginState){
+         <button type="submit" class="btn-primary login-btn">Cadastrar</button>
+      }
+      @else{
+        <button type="submit" class="btn-primary login-btn">Entrar</button>
+      }
+     
      <button type="button" class="btn-primary cancel-btn" (click)="cleanForm()">Limpar</button>
     </form>
 
     <div class="actions">
-      <a href="#" class="link">Esqueci minha senha</a>
-      
+      <a href="#" class="link">Esqueci minha senha</a>      
       <div class="divider"></div>
-      
-      <span class="create-account">
-        Não tem uma conta? 
-        <a href="#" class="link">Criar novo usuário</a>
-      </span>
+      @if(loginState){
+        <span class="create-account">
+          <p>Não tem uma conta?  <span class="link" (click)="changeValidatorsAndState()">Criar novo usuário</span> </p>
+        </span>
+      }@else {
+         <span class="create-account">
+          <p>Já tem uma conta?  <span class="link" (click)="changeValidatorsAndState()">Fazer login</span> </p>
+        </span>
+      }
+     
     </div>
   </div>
   </body>
