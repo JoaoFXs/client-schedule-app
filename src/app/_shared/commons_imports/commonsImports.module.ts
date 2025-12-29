@@ -10,6 +10,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { Router } from "@angular/router";
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 @NgModule({
     declarations: [],
     imports: [CommonModule,
@@ -21,7 +22,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
               MatMenuModule,
             MatSidenavModule,
             FormsModule,
-            NgxMaskDirective
+            NgxMaskDirective,
+            MatProgressSpinnerModule
               ],
     exports: [CommonModule, 
               RouterModule, 
@@ -32,7 +34,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
             MatMenuModule,
           MatSidenavModule,
           FormsModule,
-          NgxMaskDirective
+          NgxMaskDirective,
+          MatProgressSpinnerModule
         ],
     providers: [provideNgxMask()]
 })
