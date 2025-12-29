@@ -59,6 +59,7 @@ export class LoginComponent {
     this.loginMap = this.loginForm.value;
     
     if(!this.loginState){
+       this.setValidators()
       console.log("Registrando usuario")
           this.loginService.register(this.loginMap).subscribe(
             {
@@ -152,8 +153,8 @@ export class LoginComponent {
 
 
   changeValidatorsAndState(){
-    this.setValidators();
     this.loginState = !this.loginState;
+    this.setValidators();
   }
   get email(){
     return this.loginForm.get('email')!;
