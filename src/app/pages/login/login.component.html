@@ -1,5 +1,7 @@
+
 <body>
 <div class="login-card">
+  
     <div class="login-header">
       <h2>Bem-vindo de volta</h2>
       <p>Insira suas credenciais para acessar</p>
@@ -116,4 +118,9 @@
      
     </div>
   </div>
+  <div *ngIf="isLoading" class="loading-overlay">
+    <mat-spinner></mat-spinner>
+  </div>
   </body>
+
+  

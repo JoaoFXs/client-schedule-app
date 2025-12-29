@@ -28,6 +28,7 @@ export class LoginComponent {
   complexEmailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
   
   loginState: boolean = true;
+  isLoading: boolean = false;
   constructor(
     private loginService: LoginService,
     private snack: MatSnackBar,
@@ -56,6 +57,7 @@ export class LoginComponent {
       return;
     }
 
+    this.isLoading = true;
     this.loginMap = this.loginForm.value;
     
     if(!this.loginState){
@@ -70,6 +72,7 @@ export class LoginComponent {
                   this.router.navigateByUrl("/login");
               },
               error: (erro) =>{
+                  this.isLoading = false;
                   const error = erro.error.message;
                   this.showMessage(error, 'X');
                   console.log(erro);
@@ -89,9 +92,11 @@ export class LoginComponent {
                 this.showMessage('Login realizado com sucesso!', 'OK');
                 this.loginState = true
                 this.router.navigateByUrl("/");
+                this.isLoading = false;
               },
               error: (erro) => {
                 this.showMessage('Email ou senha incorretos, tente novamente', 'X');
+                this.isLoading = false;
               }
               }
         )
