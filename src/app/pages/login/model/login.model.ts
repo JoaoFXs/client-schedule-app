@@ -18,3 +18,16 @@ export interface TokenPayload{
   name?: string;     
 }
 
+
+export class ErrorResponse{
+  error?: ErrorDetail;
+  status?: string;
+  code?: string;
+  message?: string;
+}
+
+export class ErrorDetail {
+  status?: string;
+  code?: string;
+  message?: string;
+}

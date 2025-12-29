@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LoginDTO, TokenDTO } from './model/login.model';
+import { LoginDTO, TokenDTO, ErrorResponse } from './model/login.model';
 import { LoginService } from './services/login-service';
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { MatSnackBar } from  '@angular/material/snack-bar';
@@ -68,6 +68,11 @@ export class LoginComponent {
                   console.log(resposta);
                       this.loginState = true
                   this.router.navigateByUrl("/login");
+              },
+              error: (erro) =>{
+                  const error = erro.error.message;
+                  this.showMessage(error, 'X');
+                  console.log(erro);
               }
             }
           )
