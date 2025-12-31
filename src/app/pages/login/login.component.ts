@@ -66,6 +66,7 @@ export class LoginComponent {
           this.loginService.register(this.loginMap).subscribe(
             {
               next: (resposta) =>{
+                  this.isLoading = false;
                   this.loginMap = new LoginDTO();
                   console.log(resposta);
                       this.loginState = true
