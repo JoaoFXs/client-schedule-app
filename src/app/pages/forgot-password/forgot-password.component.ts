@@ -37,14 +37,17 @@ export class ForgotPasswordComponent {
   ngOnInit(){
     this.route.queryParams.subscribe(params => { 
       this.token = params['token'];
-    })
+    });
+
     if(this.token){
       this.validationSuccess = true;
       this.changePasswordForm = new FormGroup({
         password: new FormControl('', [Validators.required, Validators.pattern(this.complexPasswordRegex)]),
-        passwordConfirmation: new FormControl('', [Validators.required])
+        passwordConfirmation: new FormControl('', [Validators.required]),
+        token: new FormControl(this.token)
       });
     }
+
     console.log("Token capturado", this.token);
      this.forgotPasswordForm = new FormGroup({
       email: new FormControl('')
@@ -52,6 +55,38 @@ export class ForgotPasswordComponent {
 
   }
 
+
+  changePassword(){
+    this.setValidatorsChangePassword();
+    console.log(this.changePasswordForm.value);
+    if(this.changePasswordForm.invalid){
+    return;
+    }
+    this.isLoading = true;
+    const formValue = this.changePasswordForm.value;
+    this.changePasswordForm.disable();
+
+    const changePasswordObj = {
+      newPassword: formValue.password,
+      token: formValue.token
+    }
+
+    this.forgotPasswordService.changePassword(changePasswordObj as any).subscribe(
+      {  next: (resposta) => {
+        this.isLoading = false;
+        this.changePasswordForm.enable();
+        this.statusMessage = resposta.message;
+        this.showMessage(this.statusMessage!, "OK");
+        this.changePasswordForm.reset();
+        this.router.navigateByUrl("/login");
+      },
+      error: (erro) => {
+        this.isLoading = false;
+        this.changePasswordForm.enable();
+        console.log(erro);
+        }
+    })
+  }
 
 
   requestReset(){
@@ -124,9 +159,5 @@ export class ForgotPasswordComponent {
       horizontalPosition: 'center',
       verticalPosition: 'top'
     });
-  }
-
-  changePassword(){
-
   }
 }
