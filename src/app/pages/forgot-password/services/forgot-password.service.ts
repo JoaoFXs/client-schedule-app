@@ -12,13 +12,18 @@ export class ForgotPasswordService {
   private readonly baseUrl = 'http://localhost:8080/api/'
 
   requestPasswordReset(dados: ForgotPasswordDTO): Observable<SimpleMessageReturn>{
-    console.log("Dados antes de enviar", dados)
+    console.log("[requestPasswordReset] Dados antes de enviar", dados)
     return this.http.post<SimpleMessageReturn>(`${this.baseUrl}reset-password`, dados);
   }
 
   changePassword(dados: ChangePasswordDTO): Observable<SimpleMessageReturn>{
-    console.log("Dados antes de enviar", dados)
+    console.log("[changePassword] Dados antes de enviar", dados)
     return this.http.put<SimpleMessageReturn>(`${this.baseUrl}reset-password`, dados);
+  }
+
+  validateToken(token: string): Observable<SimpleMessageReturn>{
+    console.log("[validateToken] Dados antes de enviar", token)
+    return this.http.get<SimpleMessageReturn>(`${this.baseUrl}reset-password?token=${token}`);
   }
   
 }
