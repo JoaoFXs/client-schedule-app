@@ -47,7 +47,10 @@ export class LoginComponent {
     });
   }
 
-  
+  public redirectToForgotPassword(){
+    this.router.navigateByUrl("/forgot-password");
+  }
+
 
 
   public login(){
@@ -62,7 +65,6 @@ export class LoginComponent {
     
     if(!this.loginState){
        this.setValidators()
-      console.log("Registrando usuario")
           this.loginService.register(this.loginMap).subscribe(
             {
               next: (resposta) =>{
