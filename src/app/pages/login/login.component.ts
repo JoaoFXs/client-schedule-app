@@ -144,7 +144,7 @@ export class LoginComponent {
         } else {
           // Estado de Cadastro (loginState false): Validações complexas
           emailControl?.setValidators([Validators.required, Validators.email, Validators.pattern(this.complexEmailRegex)]);
-          passControl?.setValidators([Validators.required, Validators.minLength(12), Validators.pattern(this.complexPasswordRegex)]);
+          passControl?.setValidators([Validators.required, Validators.minLength(8), Validators.pattern(this.complexPasswordRegex)]);
           passConfirmationControl?.setValidators([Validators.required]);
           phoneControl?.setValidators([Validators.required]);
           usernameControl?.setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.complexNameRegex)]);
