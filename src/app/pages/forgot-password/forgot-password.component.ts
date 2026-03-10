@@ -49,6 +49,7 @@ export class ForgotPasswordComponent {
       if (this.token) {
         this.forgotPasswordService.validateToken(this.token).subscribe({
           next: (resposta) => {
+            this.errorToken = false;
             this.validationSuccess = true;
             this.changePasswordForm = new FormGroup({
               password: new FormControl('', [Validators.required, Validators.pattern(this.complexPasswordRegex)]),
@@ -94,11 +95,19 @@ export class ForgotPasswordComponent {
         this.router.navigateByUrl("/login");
       },
       error: (erro) => {
-        this.isLoading = false;
-        this.changePasswordForm.enable();
-        this.errorToken = true;
-        this.errorTokenMessage = erro.error.message;
-        console.log(erro);
+
+        if(erro.status == 400){
+            this.errorToken = true;
+            this.validationSuccess = false;
+            this.errorTokenMessage = erro.error.message;
+        }else{
+           this.isLoading = false;
+          this.changePasswordForm.enable();
+          this.showMessage(erro.error.message, "OK");
+          this.changePasswordForm.reset();
+          console.log(erro);
+        }
+       
         }
     })
   }
