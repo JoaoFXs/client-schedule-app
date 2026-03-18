@@ -1,6 +1,6 @@
 <header>
   <mat-toolbar class="toolbar">
-    <button matIconButton class="icon"  [matMenuTriggerFor]="menu">
+    <button mat-icon-button class="icon"  [matMenuTriggerFor]="menu">
           <mat-icon>menu</mat-icon>
     </button>
     <span>Sistema de Agendamento</span>
@@ -10,23 +10,25 @@
           <mat-drawer #drawer class="drawer-content" mode="side">
                 <p class="username">{{username}}</p>
                 <p class="email">{{email}}</p>
-                <button matIconButton class="icon logout-btn" (click)="loginService.logout();drawer.toggle()" matButton >
+                <button mat-icon-button class="icon logout-btn" (click)="loginService.logout();drawer.toggle()">
                    <mat-icon>logout</mat-icon>
                 </button>
           </mat-drawer>  
-          @if(loginService.verifyIfLoggedIn()){
-              <button matIconButton class="icon person-icon"  matButton (click)="drawer.toggle()">
-                <mat-icon>person</mat-icon>
-              </button>
-          }
-          @else {
-              <button matIconButton class="icon person-icon" (click)="redirectLogin()">
-                <mat-icon>person</mat-icon>
-              </button>
-          }
+          <mat-drawer-content class="drawer-main-content">
+              @if(loginService.verifyIfLoggedIn()){
+                  <button mat-icon-button class="icon person-icon" (click)="drawer.toggle()">
+                    <mat-icon>person</mat-icon>
+                  </button>
+              }
+              @else {
+                  <button mat-icon-button class="icon person-icon" (click)="redirectLogin()">
+                    <mat-icon>person</mat-icon>
+                  </button>
+              }
+          </mat-drawer-content>
     </mat-drawer-container>
     
-    <button matIconButton class="icon share-icon">
+    <button mat-icon-button class="icon share-icon">
       <mat-icon>share</mat-icon>
     </button>
   </mat-toolbar>

@@ -33,16 +33,6 @@
   border: none;
   cursor: pointer;
   
-  /* Tamanho e Forma */
-  width: 40px; /* Tamanho fixo para área de clique */
-  height: 40px;
-  border-radius: 50%; /* Botão totalmente redondo (círculo) */
-  
-  /* Centralizar o ícone dentro do botão */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
   /* A Mágica: Transição Suave */
   transition: all 0.2s ease-in-out;
 }
@@ -55,6 +45,18 @@
 
 .icon:active {
   transform: scale(0.95); /* Efeito de clique (encolhe um pouco) */
+}
+
+.drawer-container {
+  /* Remove o fundo cinza claro padrão do Angular Material para este container */
+  background-color: transparent;
+}
+
+.drawer-main-content {
+  /* Sobrescreve o overflow: auto padrão que causa a barra de rolagem */
+  overflow: visible !important;
+  display: flex;
+  align-items: center;
 }
 
 .drawer-content{
@@ -92,6 +94,3 @@
   background-color: var(--hover-bg); /* Clareia o fundo ao passar o mouse */
   transform: translateY(-95%); /* Leve subida (efeito flutuante) */
 }
-
-
-
