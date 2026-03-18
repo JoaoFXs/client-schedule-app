@@ -11,6 +11,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import { Router } from "@angular/router";
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { GoogleSigninButtonModule } from "@abacritt/angularx-social-login";
 @NgModule({
     declarations: [],
     imports: [CommonModule,
@@ -23,7 +24,9 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
             MatSidenavModule,
             FormsModule,
             NgxMaskDirective,
-            MatProgressSpinnerModule
+            MatProgressSpinnerModule,
+            /** Social Login Modules */
+            GoogleSigninButtonModule
               ],
     exports: [CommonModule, 
               RouterModule, 
@@ -35,9 +38,12 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
           MatSidenavModule,
           FormsModule,
           NgxMaskDirective,
-          MatProgressSpinnerModule
+          MatProgressSpinnerModule,
+          /** Social Login Modules */
+            GoogleSigninButtonModule
         ],
-    providers: [provideNgxMask()]
+    providers: [
+      provideNgxMask()]
 })
 export class CommonsImports {
 

@@ -12,8 +12,7 @@ import { authInterceptor } from './_shared/interceptors/auth.interceptor';
 import { GoogleLoginProvider, SocialLoginModule } from '@abacritt/angularx-social-login';
 import { GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 import { SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
-import { provideSocialAuth } from './_shared/config/auth-config';
-
+import { importProvidersFrom } from '@angular/core';
 @NgModule({
   declarations: [
     AppComponent
@@ -28,9 +27,28 @@ import { provideSocialAuth } from './_shared/config/auth-config';
   ],
   providers: [ provideZoneChangeDetection({ eventCoalescing: true }),  
     provideAnimations(), 
-    provideHttpClient(), 
     provideHttpClient(withInterceptors([authInterceptor])),
-    provideSocialAuth
+    // Import providers from SocialLoginModule
+    importProvidersFrom(SocialLoginModule), 
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              '', // Replace with your actual client ID
+              { oneTapEnabled: false }
+            ),
+          },
+          // Add other providers as needed (Facebook, etc.)
+        ],
+        onError: (err: any) => {
+          console.error('SocialAuth Error', err);
+        },
+      } as SocialAuthServiceConfig,
+    }
   ],
   bootstrap: [AppComponent]
 })

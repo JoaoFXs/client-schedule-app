@@ -9,7 +9,7 @@ export const socialAuthConfig: SocialAuthServiceConfig = {
       {
         id: GoogleLoginProvider.PROVIDER_ID,
         provider: new GoogleLoginProvider(
-          'client-id'
+          ''
         )
       }
     ],
