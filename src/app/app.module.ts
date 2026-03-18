@@ -9,8 +9,10 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './_shared/interceptors/auth.interceptor';
-import { SocialLoginModule } from '@abacritt/angularx-social-login';
+import { GoogleLoginProvider, SocialLoginModule } from '@abacritt/angularx-social-login';
 import { GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
+import { SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
+import { provideSocialAuth } from './_shared/config/auth-config';
 
 @NgModule({
   declarations: [
@@ -20,13 +22,16 @@ import { GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
     BrowserModule,
     HeaderModule,
     AppRoutingModule,
+    /** Social Login Modules */
     SocialLoginModule,
     GoogleSigninButtonModule
   ],
   providers: [ provideZoneChangeDetection({ eventCoalescing: true }),  
     provideAnimations(), 
     provideHttpClient(), 
-    provideHttpClient(withInterceptors([authInterceptor]))],
+    provideHttpClient(withInterceptors([authInterceptor])),
+    provideSocialAuth
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
