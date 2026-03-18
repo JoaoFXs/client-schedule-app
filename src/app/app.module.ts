@@ -9,6 +9,9 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './_shared/interceptors/auth.interceptor';
+import { SocialLoginModule } from '@abacritt/angularx-social-login';
+import { GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -16,7 +19,9 @@ import { authInterceptor } from './_shared/interceptors/auth.interceptor';
   imports: [
     BrowserModule,
     HeaderModule,
-    AppRoutingModule
+    AppRoutingModule,
+    SocialLoginModule,
+    GoogleSigninButtonModule
   ],
   providers: [ provideZoneChangeDetection({ eventCoalescing: true }),  
     provideAnimations(), 
