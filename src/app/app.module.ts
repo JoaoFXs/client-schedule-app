@@ -9,9 +9,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './_shared/interceptors/auth.interceptor';
-import { GoogleLoginProvider, SocialLoginModule } from '@abacritt/angularx-social-login';
-import { GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
-import { SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
+import { GoogleLoginProvider, SocialLoginModule, GoogleSigninButtonModule, SocialAuthServiceConfig, SOCIAL_AUTH_CONFIG } from '@abacritt/angularx-social-login';
 import { importProvidersFrom } from '@angular/core';
 @NgModule({
   declarations: [
@@ -25,20 +23,16 @@ import { importProvidersFrom } from '@angular/core';
     SocialLoginModule,
     GoogleSigninButtonModule
   ],
-  providers: [ provideZoneChangeDetection({ eventCoalescing: true }),  
-    provideAnimations(), 
-    provideHttpClient(withInterceptors([authInterceptor])),
-    // Import providers from SocialLoginModule
-    importProvidersFrom(SocialLoginModule), 
+  providers: [ 
     {
-      provide: 'SocialAuthServiceConfig',
+      provide: SOCIAL_AUTH_CONFIG,
       useValue: {
         autoLogin: false,
         providers: [
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
-              '', // Replace with your actual client ID
+              '703158384343-e06fsambbi5n9ncbf08uphtlv82a05rp.apps.googleusercontent.com', // Replace with your actual client ID
               { oneTapEnabled: false }
             ),
           },
@@ -48,7 +42,11 @@ import { importProvidersFrom } from '@angular/core';
           console.error('SocialAuth Error', err);
         },
       } as SocialAuthServiceConfig,
-    }
+    },
+    provideZoneChangeDetection({ eventCoalescing: true }),  
+    provideAnimations(), 
+    provideHttpClient(withInterceptors([authInterceptor]))
+    
   ],
   bootstrap: [AppComponent]
 })

@@ -7,6 +7,7 @@ import { timeout } from 'rxjs';
 import { Validators } from '@angular/forms';
 import { matchPasswordValidator } from './validators/match-password-validator';
 import { Router } from '@angular/router';
+import { SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
 @Component({
   selector: 'app-login',
   standalone: false,
@@ -29,10 +30,12 @@ export class LoginComponent {
   
   loginState: boolean = true;
   isLoading: boolean = false;
+  socialUser: SocialUser | null = null;
   constructor(
     private loginService: LoginService,
     private snack: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private authService: SocialAuthService
   ){
   }
 
@@ -44,6 +47,16 @@ export class LoginComponent {
         passwordConfirmation: new FormControl(''),
         cpf: new FormControl(''),
         username: new FormControl('') //
+    });
+
+    // Inscreva-se para escutar o retorno do login do Google
+    this.authService.authState.subscribe((user) => {
+      this.socialUser = user;
+      console.log('Dados recebidos do Google:', user);
+      if (user) {
+        this.showMessage(`Bem-vindo pelo Google, ${user.firstName}!`, 'OK');
+        // Aqui você enviará o token (user.idToken) para o seu Backend validar!
+      }
     });
   }
 

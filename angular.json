@@ -63,6 +63,12 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "headers": {
+              "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+              "Cross-Origin-Embedder-Policy": "unsafe-none"
+            }
+          },
           "configurations": {
             "production": {
               "buildTarget": "client-schedule-app:build:production"
