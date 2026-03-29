@@ -7,6 +7,8 @@ import { timeout } from 'rxjs';
 import { Validators } from '@angular/forms';
 import { matchPasswordValidator } from './validators/match-password-validator';
 import { Router } from '@angular/router';
+import { SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
+import { REGEX_PATTERNS } from '../../_shared/constants/regex.constants';
 @Component({
   selector: 'app-login',
   standalone: false,
@@ -18,21 +20,15 @@ export class LoginComponent {
   loginMap!: LoginDTO;
   tokenMap!: TokenDTO;
   loginForm!: FormGroup;
-  // Regex que exige: 1 maiúscula, 1 minúscula, 1 número, 1 especial, e mínimo 8 caracteres.
-  complexPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
 
-  // Regex que exige
-  complexNameRegex = /^(?![ ])(?!.*[ ]{2})((?:e|da|do|das|dos|de|d'|D'|la|las|el|los)\s*?|(?:[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð'][^\s]*\s*?)(?!.*[ ]$))+$/;
-  
-  // Regex que exige
-  complexEmailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
-  
   loginState: boolean = true;
   isLoading: boolean = false;
+  socialUser: SocialUser | null = null;
   constructor(
     private loginService: LoginService,
     private snack: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private authService: SocialAuthService
   ){
   }
 
@@ -45,6 +41,62 @@ export class LoginComponent {
         cpf: new FormControl(''),
         username: new FormControl('') //
     });
+
+    // Inscreva-se para escutar o retorno do login do Google
+    this.authService.authState.subscribe((user) => {
+          this.socialUser = user;
+          console.log('Dados recebidos do Google:', user);
+          if (user) {
+            this.loginService.verifyIfUserExists(user.idToken).subscribe(
+              {
+                next: (token) =>{
+                  if(token){ 
+                    // Se o usuário ja existe, loga ele normalmente
+                    this.tokenMap =  token as TokenDTO
+                    localStorage.setItem('token', JSON.stringify(this.tokenMap.token));
+                    this.showMessage('Login realizado com sucesso!', 'OK');
+                    this.loginState = true
+                    this.router.navigateByUrl("/");
+                    this.isLoading = false;
+                }
+              },
+              error: (err) =>{
+                this.loginState = false; // Caso o usuário não exista, muda para o estado de cadastro, pré-preenchendo o email e senha com os dados do Google
+                this.loginForm.patchValue({
+                  email: user.email,
+                  username: user.name
+                });
+                this.setValidators();
+                    if(this.loginForm.invalid){
+          return;
+        }
+
+          this.isLoading = true;
+          this.loginMap = this.loginForm.value;
+          this.loginService.register(this.loginMap).subscribe(
+            {
+              next: (resposta) =>{  
+                  this.isLoading = false;
+                  this.loginMap = new LoginDTO();
+                  console.log(resposta);
+                      this.loginState = true
+                  this.router.navigateByUrl("/login");
+              },
+              error: (erro) =>{
+                  this.isLoading = false;
+                  const error = erro.error.message;
+                  this.showMessage(error, 'X');
+                  console.log(erro);
+              }
+            }
+          )
+            console.error('Erro ao verificar usuário social:', err);
+          }
+          }
+        )
+     
+      }
+    });
   }
 
   public redirectToForgotPassword(){
@@ -55,7 +107,7 @@ export class LoginComponent {
 
   public login(){
     this.setValidators()
-        console.log("LOGIN STATE", this.loginState)
+    console.log("LOGIN STATE", this.loginState)
     if(this.loginForm.invalid){
       return;
     }
@@ -85,7 +137,7 @@ export class LoginComponent {
       
     }else{
         console.log(this.loginMap)
-            this.loginService.login(this.loginMap).subscribe(
+          this.loginService.login(this.loginMap).subscribe(
               {
               next: (resposta) => {
                 this.loginMap = new LoginDTO();
@@ -102,9 +154,10 @@ export class LoginComponent {
                 this.isLoading = false;
               }
               }
-        )
+      )
     }
   }
+
 
   public showMessage(message: string, action?: string){
     this.snack.open(message, action,{
@@ -143,11 +196,11 @@ export class LoginComponent {
 
         } else {
           // Estado de Cadastro (loginState false): Validações complexas
-          emailControl?.setValidators([Validators.required, Validators.email, Validators.pattern(this.complexEmailRegex)]);
-          passControl?.setValidators([Validators.required, Validators.minLength(8), Validators.pattern(this.complexPasswordRegex)]);
+          emailControl?.setValidators([Validators.required, Validators.email, Validators.pattern(REGEX_PATTERNS.COMPLEX_EMAIL_REGEX)]);
+          passControl?.setValidators([Validators.required, Validators.minLength(8), Validators.pattern(REGEX_PATTERNS.COMPLEX_PASSWORD)]);
           passConfirmationControl?.setValidators([Validators.required]);
           phoneControl?.setValidators([Validators.required]);
-          usernameControl?.setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.complexNameRegex)]);
+          usernameControl?.setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(REGEX_PATTERNS.COMPLEX_NAME_REGEX)]);
           cpfControl?.setValidators([Validators.required]);
           this.loginForm.setValidators(matchPasswordValidator);
         }

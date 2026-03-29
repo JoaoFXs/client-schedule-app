@@ -1,7 +1,9 @@
 
 <body>
 <div class="login-card">
-  
+  <h1>Google Login</h1>
+
+
     <div class="login-header">
       <h2>Bem-vindo de volta</h2>
       <p>Insira suas credenciais para acessar</p>
@@ -91,12 +93,12 @@
               <p *ngIf="cpf.errors?.['required']">CPF é obrigatório</p>
         </div>
       </div>
-
      <!-- <button type="submit" class="btn-primary">Entrar</button> -->
       @if(!loginState){
          <button type="submit" class="btn-primary login-btn">Cadastrar</button>
       }
       @else{
+        <asl-google-signin-button type='icon' size='large'></asl-google-signin-button>
         <button type="submit" class="btn-primary login-btn">Entrar</button>
       }
      

@@ -12,7 +12,7 @@ import { catchError, throwError } from 'rxjs';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
     const router = inject(Router);
-
+    
     const token = localStorage.getItem('token');
 
     // Clona a requisição se tiver token 
@@ -42,7 +42,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
             // Redireciona para o login
             router.navigate(['/login']);
-            
             // Mostra um alerta
             // alert('Sua sessão expirou. Por favor, faça login novamente.');
         }

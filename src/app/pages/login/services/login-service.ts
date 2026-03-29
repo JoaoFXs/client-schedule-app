@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import { LoginDTO, TokenPayload } from '../model/login.model';
+import { LoginDTO, TokenDTO, TokenPayload } from '../model/login.model';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -52,5 +52,10 @@ export class LoginService {
   logout(){
     localStorage.removeItem('token');
   } 
+
+  verifyIfUserExists(jwt: string | undefined): Observable<TokenDTO>{
+    return this.http.get<TokenDTO>(`${this.baseUrl}auth/social-login/${jwt}`);
+  }
+
 
 }
