@@ -1,6 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
 import { catchError, throwError } from 'rxjs';
 /**
  * Interceptador para adicionar Authorization bearer na requisição
@@ -12,6 +13,7 @@ import { catchError, throwError } from 'rxjs';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
     const router = inject(Router);
+    const authService = inject(SocialAuthService);
     
     const token = localStorage.getItem('token');
 
@@ -39,6 +41,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             
             // Limpa outros dados do usuário
             //localStorage.removeItem('usuario-dados');
+
+            // Remove a sessão persistente do Google (o '.catch()' silencia erros caso não seja login social)
+            authService.signOut().catch(() => {});
 
             // Redireciona para o login
             router.navigate(['/login']);

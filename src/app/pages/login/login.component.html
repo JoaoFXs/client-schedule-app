@@ -8,7 +8,7 @@
       <h2>Bem-vindo de volta</h2>
       <p>Insira suas credenciais para acessar</p>
     </div>
-
+    <!--- Caso for loginSocial deve usar outro submit-->
     <form #loginFRM="ngForm" (ngSubmit)="login()" [formGroup]="loginForm">
 
       <div class="input-group" *ngIf="!loginState">

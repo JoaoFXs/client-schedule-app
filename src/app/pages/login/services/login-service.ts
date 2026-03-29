@@ -15,8 +15,10 @@ export class LoginService {
 
 
   login(dados: LoginDTO): Observable<LoginDTO>{
-    console.log("Dados antes de enviar", dados)
-    return this.http.post<LoginDTO>(`${this.baseUrl}auth/login`, dados);
+    var token  = this.http.post<LoginDTO>(`${this.baseUrl}auth/login`, dados);
+    var tokenStr = token as TokenDTO;
+    localStorage.setItem('token', JSON.stringify(tokenStr.token));
+    return token;
   }
 
   register(dados: LoginDTO): Observable<LoginDTO>{
@@ -54,8 +56,14 @@ export class LoginService {
   } 
 
   verifyIfUserExists(jwt: string | undefined): Observable<TokenDTO>{
-    return this.http.get<TokenDTO>(`${this.baseUrl}auth/social-login/${jwt}`);
+    var token = this.http.get<TokenDTO>(`${this.baseUrl}auth/social-login/${jwt}`)
+    var tokenStr = token as TokenDTO;
+    localStorage.setItem('token', JSON.stringify(tokenStr.token));
+    return token;
   }
 
+  registerSocialUser(dados: LoginDTO, jwt: string | undefined): Observable<LoginDTO>{
+    return this.http.post<LoginDTO>(`${this.baseUrl}auth/social-login/${jwt}`, dados);
+  }
 
 }
