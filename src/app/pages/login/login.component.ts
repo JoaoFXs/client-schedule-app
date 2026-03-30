@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 import { SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
 import { REGEX_PATTERNS } from '../../_shared/constants/regex.constants';
 import { Subject,takeUntil, filter, switchMap,tap, EMPTY, catchError,  } from 'rxjs';
+import { NotificationServiceService } from '../../_shared/services/notification-service.service';
+import { PasswordValidationUtils } from '../../_shared/utils/password-validation-utils';
 @Component({
   selector: 'app-login',
   standalone: false,
@@ -18,19 +20,20 @@ import { Subject,takeUntil, filter, switchMap,tap, EMPTY, catchError,  } from 'r
 })
 export class LoginComponent implements OnInit, OnDestroy {
   
-  loginMap!: LoginDTO;
-  tokenMap!: TokenDTO;
-  loginForm!: FormGroup;
+  loginMap!: LoginDTO; // Mapeamento para o login, pode ser usado tanto para login quanto para registro
+  tokenMap!: TokenDTO; // Mapeamento para o token
+  loginForm!: FormGroup; // Formulário reativo para login e registro
+  loginState: boolean = true; // true = Login, false = Cadastro
+  isLoading: boolean = false; // Indicador de carregamento para feedback visual
+  socialUser: SocialUser | null = null; // Armazena os dados do usuário social (Google)
   private destroy$ = new Subject<void>(); // Para limpar os subscribes
-  loginState: boolean = true;
-  isLoading: boolean = false;
-  socialUser: SocialUser | null = null;
 
   constructor(
     private loginService: LoginService,
-    private snack: MatSnackBar,
+    private notificationService: NotificationServiceService,
     private router: Router,
-    private authService: SocialAuthService
+    private authService: SocialAuthService,
+    public passwordValidationUtils: PasswordValidationUtils
   ){
   }
 
@@ -61,9 +64,6 @@ export class LoginComponent implements OnInit, OnDestroy {
           // Se o usuário existir e retornar o token
           tap((resposta: any) => {
             if (resposta) {
-              // Ajuste 'resposta.token' de acordo com o retorno da sua API
-              const tokenStr = resposta.token || resposta;
-              localStorage.setItem('token', tokenStr);
 
               this.handleLoginSuccess();
             }
@@ -82,15 +82,19 @@ export class LoginComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-// --- Métodos Auxiliares para manter o código limpo ---
+// --- Métodos Auxiliares do listenToLoginSocial ---
 private prepareRegistrationForm(user: any) {
   this.loginState = false;
   this.loginForm.patchValue({
     email: user.email,
     username: user.name
   });
+
+  //Desabilita apenas o campo de email para edição
+  this.loginForm.get('email')?.disable();
   this.setValidators();
 }
+
 private handleAutoRegistration(jwt: string | undefined) {
     if (this.loginForm.invalid) return EMPTY;
 
@@ -107,14 +111,14 @@ private handleAutoRegistration(jwt: string | undefined) {
       catchError(erro => {
         this.isLoading = false;
         const errorMsg = erro.error?.message || 'Erro ao registrar';
-        this.showMessage(errorMsg, 'X');
+        this.notificationService.showMessage(errorMsg, 'X');
         return EMPTY;
       })
     );
   }
 
   public handleLoginSuccess(){
-    this.showMessage('Login realizado com sucesso!', 'OK');
+    this.notificationService.showMessage('Login realizado com sucesso!', 'OK');
     this.loginState = true
     this.router.navigateByUrl("/");
     this.isLoading = false;
@@ -123,82 +127,62 @@ private handleAutoRegistration(jwt: string | undefined) {
   public redirectToForgotPassword(){
     this.router.navigateByUrl("/forgot-password");
   }
+// Método principal para lidar com login e registro dependendo do estado atual (loginState)
+public login(): void {
+  this.setValidators();
+  
+  if (this.loginForm.invalid) return;
 
-  public login(){
-    this.setValidators()
-    console.log("LOGIN STATE", this.loginState)
-    if(this.loginForm.invalid){
-      return;
-    }
-    this.isLoading = true;
-    this.loginMap = this.loginForm.value;
+  this.isLoading = true;
+  const payload = this.loginForm.value;
 
-    if(!this.loginState){
-       this.setValidators()
-       
-       if (this.socialUser && this.socialUser.idToken) {
-         // 1. Usa o endpoint de cadastro social se veio do Google
-         this.handleAutoRegistration(this.socialUser.idToken).subscribe();
-       } else {
-         // 2. Usa o endpoint de cadastro normal se for um usuário comum
-         this.loginService.register(this.loginMap).subscribe(
-           {
-             next: (resposta) =>{
-                 this.isLoading = false;
-                 this.loginMap = new LoginDTO();
-                 console.log(resposta);
-                 this.loginState = true
-                 this.router.navigateByUrl("/login");
-             },
-             error: (erro) =>{
-                 this.isLoading = false;
-                 const error = erro.error.message;
-                 this.showMessage(error, 'X');
-                 console.log(erro);
-             }
-           }
-         )
-       }
-    }else{
-        console.log(this.loginMap)
-          this.loginService.login(this.loginMap).subscribe(
-              {
-              next: (resposta: any) => {
-                // Ajuste 'resposta.token' de acordo com o retorno da sua API
-                const tokenStr = resposta?.token || resposta;
-                if (tokenStr) {
-                  localStorage.setItem('token', tokenStr);
-                }
+  // 1. Determina qual fluxo seguir
+  const request$ = this.loginState 
+    ? this.loginService.login(payload) 
+    : this.getRegisterObservable(payload);
 
-                this.loginMap = new LoginDTO();
-                this.showMessage('Login realizado com sucesso!', 'OK');
-                this.loginState = true
-                this.router.navigateByUrl("/");
-                this.isLoading = false;
-              },
-              error: () => {
-                this.showMessage('Email ou senha incorretos, tente novamente', 'X');
-                this.isLoading = false;
-              }
-              }
-      )
-    }
-  }
+  // 2. Executa a requisição de forma limpa
+  request$.subscribe({
+    next: (res) => this.handleAuthSuccess(res),
+    error: (err) => this.handleAuthError(err),
+    complete: () => this.isLoading = false
+  });
+}
 
-  public showMessage(message: string, action?: string){
-    this.snack.open(message, action,{
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top'
-    });
-  }
+/** * Métodos Auxiliares de login()
+ */
+
+private getRegisterObservable(payload: any) {
+  // Se for social, usa o auto-registro, senão o registro normal
+  return (this.socialUser?.idToken) 
+    ? this.handleAutoRegistration(this.socialUser.idToken)
+    : this.loginService.register(payload);
+}
+
+private handleAuthSuccess(resposta: any) {
+  const token = resposta?.token || resposta;
+  if (token) this.loginService.salvarToken(token);
+
+  this.notificationService.showMessage('Login realizado com sucesso!', 'OK');
+  
+  // Reset de estado
+  this.loginMap = new LoginDTO();
+  this.loginState = true;
+  
+  const targetUrl = this.loginState ? '/' : '/login';
+  this.router.navigateByUrl(targetUrl);
+}
+
+private handleAuthError(erro: any) {
+  this.isLoading = false;
+  const msg = erro?.error?.message || 'Email ou senha incorretos, Tente novamente.';
+  this.notificationService.showMessage(msg, 'X');
+}
+  
   public cleanForm(){
     this.loginForm.reset();
   }
-  hasUpperCase(val: string) { return /[A-Z]/.test(val); }
-  hasLowerCase(val: string) { return /[a-z]/.test(val); }
-  hasNumber(val: string) { return /[0-9]/.test(val); }
-  hasSpecial(val: string) { return /[!@#$%^&*]/.test(val); }
+
   setValidators(){      
         const controls = this.loginForm.controls;
         if (this.loginState) {
