@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Form, FormGroup, Validators, FormControl } from '@angular/forms';
 import { ForgotPasswordService } from './services/forgot-password.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { tap, timeout } from 'rxjs';
+import { tap, timeout, takeUntil, catchError, EMPTY } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationServiceService } from '../../_shared/services/notification-service.service';
 import { PasswordValidationUtils } from '../../_shared/utils/password-validation-utils';
@@ -14,7 +14,7 @@ import { Subject } from 'rxjs';
   styleUrl: './forgot-password.component.scss',
   standalone: false
 })
-export class ForgotPasswordComponent {
+export class ForgotPasswordComponent implements OnInit, OnDestroy {
   forgotPasswordForm!: FormGroup; // Formulário reativo para solicitação de reset de senha
   changePasswordForm!: FormGroup; // Formulário reativo para mudança de senha, inicializado após validação do token
   messageConfirmated: boolean = false; // Indicador para mostrar mensagem de confirmação após solicitação de reset de senha
@@ -53,13 +53,16 @@ export class ForgotPasswordComponent {
   // Lógica para escutar os parâmetros da URL e validar o token
   private listenToQueryParams(){
     this.route.queryParams.pipe(
-      tap(params => {
-        this.handleSuccessQueryParams(params);
-      }),
-      timeout(5000) // Timeout para evitar ficar esperando indefinidamente
-    ).subscribe({
-      error: (erro) => {
-        this.handleErrorQueryParams(erro);
+    takeUntil(this.destroy$),
+    catchError(error => {
+      this.handleErrorQueryParams(error);
+      return EMPTY;
+    })
+  ).subscribe(params => {
+      const token = params['token'];
+      if (token) {
+        // Se um token existir nos parâmetros da URL, exibe o formulário de mudança de senha.
+        this.handleSuccessQueryParams(token);
       }
     });
   }
@@ -73,10 +76,10 @@ export class ForgotPasswordComponent {
     });
   }
   // Manipula o sucesso na leitura dos parâmetros da URL, indicando que o token é válido e inicializando o formulário de mudança de senha
-  private handleSuccessQueryParams(params: any){
+  private handleSuccessQueryParams(token: string){
     this.validationSuccess = true;
     this.errorToken = false;
-    this.initChangePasswordForm(params['token']);
+    this.initChangePasswordForm(token);
   }
   // Manipula erros na leitura dos parâmetros da URL, indicando que o token é inválido ou expirado
   private handleErrorQueryParams(erro: any){
@@ -198,7 +201,7 @@ export class ForgotPasswordComponent {
   get passwordConfirmation(){
     return this.changePasswordForm.get('passwordConfirmation')!;
   }
-  redirectToLogin(){[
+  redirectToLogin(){
     this.router.navigateByUrl("/login")
-  ]}
+  }
 }
