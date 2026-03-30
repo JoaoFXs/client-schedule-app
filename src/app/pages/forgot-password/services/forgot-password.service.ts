@@ -3,13 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ChangePasswordDTO, ForgotPasswordDTO } from '../model/forgot-password.model';
 import { SimpleMessageReturn } from '../model/forgot-password.model';
-
+import { environment } from '../../../../environments';
 @Injectable({
   providedIn: 'root'
 })
 export class ForgotPasswordService {
   constructor(private http: HttpClient ) { }
-  private readonly baseUrl = 'http://localhost:8080/api/'
+  private readonly baseUrl = environment.apiUrl
 
   requestPasswordReset(dados: ForgotPasswordDTO): Observable<SimpleMessageReturn>{
     console.log("[requestPasswordReset] Dados antes de enviar", dados)

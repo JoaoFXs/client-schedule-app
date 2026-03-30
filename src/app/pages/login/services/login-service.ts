@@ -4,7 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { LoginDTO, TokenDTO, TokenPayload } from '../model/login.model';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { SocialAuthService } from '@abacritt/angularx-social-login';
-
+import { environment } from '../../../../environments';
 @Injectable({
   providedIn: 'root'
 })
@@ -14,7 +14,7 @@ export class LoginService {
     private http: HttpClient,
     private authService: SocialAuthService
   ) { }
-  private readonly baseUrl = 'http://localhost:8080/api/'
+  private readonly baseUrl = environment.apiUrl
 
   // Usamos BehaviorSubject para manter o estado reativo do usuário
   private currentUserSubject = new BehaviorSubject<TokenPayload | null>(this.getDadosUsuarioDecoded());
