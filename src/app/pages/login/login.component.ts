@@ -116,7 +116,7 @@ private handleAutoRegistration(jwt: string | undefined) {
       })
     );
   }
-
+  
   public handleLoginSuccess(){
     this.notificationService.showMessage('Login realizado com sucesso!', 'OK');
     this.loginState = true
