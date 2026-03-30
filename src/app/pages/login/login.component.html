@@ -1,16 +1,12 @@
 
 <body>
 <div class="login-card">
-  <h1>Google Login</h1>
-
-
     <div class="login-header">
       <h2>Bem-vindo de volta</h2>
       <p>Insira suas credenciais para acessar</p>
     </div>
-
+    <!--- Caso for loginSocial deve usar outro submit-->
     <form #loginFRM="ngForm" (ngSubmit)="login()" [formGroup]="loginForm">
-
       <div class="input-group" *ngIf="!loginState">
         <label for="username">Nome</label>
         <input name="username" type="text" id="username" placeholder="Digite seu nome" formControlName="username" required>
@@ -44,23 +40,23 @@
                 Pelo menos 8 caracteres
               </p>
               
-              <p [class.valid]="hasUpperCase(loginForm.get('password')?.value)">
-                <span class="icon">{{ hasUpperCase(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
+              <p [class.valid]="passwordValidationUtils.hasUpperCase(loginForm.get('password')?.value)">
+                <span class="icon">{{ passwordValidationUtils.hasUpperCase(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
                 Uma letra maiúscula
               </p>
 
-              <p [class.valid]="hasLowerCase(loginForm.get('password')?.value)">
-                <span class="icon">{{ hasLowerCase(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
+              <p [class.valid]="passwordValidationUtils.hasLowerCase(loginForm.get('password')?.value)">
+                <span class="icon">{{ passwordValidationUtils.hasLowerCase(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
                 Uma letra minúscula
               </p>
 
-              <p [class.valid]="hasNumber(loginForm.get('password')?.value)">
-                <span class="icon">{{ hasNumber(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
+              <p [class.valid]="passwordValidationUtils.hasNumber(loginForm.get('password')?.value)">
+                <span class="icon">{{ passwordValidationUtils.hasNumber(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
                 Um número
               </p>
 
-              <p [class.valid]="hasSpecial(loginForm.get('password')?.value)">
-                <span class="icon">{{ hasSpecial(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
+              <p [class.valid]="passwordValidationUtils.hasSpecial(loginForm.get('password')?.value)">
+                <span class="icon">{{ passwordValidationUtils.hasSpecial(loginForm.get('password')?.value) ? 'X' : '○' }}</span>
                 Um símbolo (ex: &#64;, #, $)
               </p>
             </div>

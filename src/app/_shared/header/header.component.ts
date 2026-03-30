@@ -16,10 +16,11 @@ export class HeaderComponent implements OnInit{
   email: string | undefined = '';
   
   ngOnInit(): void {
-    const dados = this.loginService.getDadosUsuario();
-    console.log("DADOS", dados);
-    this.username = dados?.name;
-    this.email = dados?.sub;
+    // Se inscrevendo no estado reativo do serviço
+    this.loginService.currentUser$.subscribe(dados => {
+      this.username = dados?.name;
+      this.email = dados?.sub;
+    });
   }
 
   constructor(
