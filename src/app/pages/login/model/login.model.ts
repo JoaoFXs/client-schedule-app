@@ -5,6 +5,7 @@ export class LoginDTO{
     cpf?: String;
     phone?: String;
     passwordConfirmation?: String;
+    isCompany?: boolean;
 }
 
 export class TokenDTO{

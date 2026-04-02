@@ -202,6 +202,7 @@ private handleAuthError(erro: any) {
           controls['phone']?.setValidators([Validators.required]);
           controls['username']?.setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(REGEX_PATTERNS.COMPLEX_NAME_REGEX)]);
           controls['cpf']?.setValidators([Validators.required]);
+          controls['isCompany']?.setValidators([Validators.required]);
           this.loginForm.setValidators(matchPasswordValidator);
         }
         // ESSENCIAL: Avisa o Angular para checar os campos agora
@@ -224,7 +225,8 @@ private handleAuthError(erro: any) {
         password: new FormControl(''),
         passwordConfirmation: new FormControl(''),
         cpf: new FormControl(''),
-        username: new FormControl('') //
+        username: new FormControl(''),
+        isCompany: new FormControl('')
     });
   }
   get email(){
@@ -244,5 +246,8 @@ private handleAuthError(erro: any) {
   }
   get cpf(){
     return this.loginForm.get('cpf')!;
+  }
+  get isCompany(){
+    return this.loginForm.get('isCompany')!;
   }
 }
