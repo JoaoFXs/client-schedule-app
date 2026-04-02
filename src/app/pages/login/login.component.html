@@ -62,6 +62,7 @@
             </div>
           </div>
       </div>
+      
 
       <div class="input-group" *ngIf="!loginState">
         <label for="password">Confirme sua Senha</label>
@@ -87,6 +88,18 @@
         <input name="cpf" mask="000.000.000-00" id="cpf" placeholder="Digite seu CPF" formControlName="cpf" required/>
         <div *ngIf="cpf.invalid && loginFRM.submitted" class="validation-error">
               <p *ngIf="cpf.errors?.['required']">CPF é obrigatório</p>
+        </div>
+      </div>
+
+      <div class="input-group" *ngIf="!loginState">
+        <label for="isCompany">Tipo de usuário</label>
+        <select name="isCompany" id="isCompany" formControlName="isCompany" required>
+          <option value="" disabled selected>Selecione o tipo de usuário</option>
+          <option value="false">Cliente</option>
+          <option value="true">Empresa</option>
+        </select>
+        <div *ngIf="isCompany.invalid && loginFRM.submitted" class="validation-error">
+              <p *ngIf="isCompany.errors?.['required']">Tipo de usuário é obrigatório</p>
         </div>
       </div>
      <!-- <button type="submit" class="btn-primary">Entrar</button> -->
