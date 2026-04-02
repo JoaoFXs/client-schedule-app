@@ -5,11 +5,15 @@ import { authGuard } from './_shared/guards/auth.guard';
 const routes: Routes = [
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule),
+    loadChildren: () => import('./pages/core/login/login.module').then(m => m.LoginModule),
   },
   {
     path: 'forgot-password',
-    loadChildren: () => import('./pages/forgot-password/forgot-password.module').then(m => m.ForgotPasswordModule),
+    loadChildren: () => import('./pages/core/forgot-password/forgot-password.module').then(m => m.ForgotPasswordModule),
+  },
+  {
+    path: 'customer',
+    loadChildren: () => import('./pages/customer/main-search/main-search.module').then(m => m.MainSearchModule),
   }
 ];
 
