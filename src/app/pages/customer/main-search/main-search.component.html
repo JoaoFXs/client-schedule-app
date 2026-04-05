@@ -1,22 +1,31 @@
 <div class="main-container">
   <form class="custom-card">
-    <h2 class="form-title">Selecione uma Opção</h2>
-    
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Escolha um serviço</mat-label>
-      <input type="text"
-             placeholder="Ex: Cabelereiro, Manicure, etc."
-             aria-label="Number"
-             matInput
-             [formControl]="myControl"
-             [matAutocomplete]="auto">
-      
-      <mat-icon matSuffix>search</mat-icon> <mat-autocomplete #auto="matAutocomplete">
-        @for (option of filteredOptions | async; track option) {
-          <mat-option [value]="option">{{option}}</mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
+  
+        <h2 class="form-title">Selecione uma Opção</h2>
+  <div class="header-search">
+    <div class="header-content">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Escolha um serviço</mat-label>
+          <input type="text"
+                placeholder="Ex: Cabelereiro, Manicure, etc."
+                aria-label="Number"
+                matInput
+                [formControl]="myControl"
+                [matAutocomplete]="auto">
+          
+          <mat-icon matSuffix>search</mat-icon> <mat-autocomplete #auto="matAutocomplete">
+            @for (option of filteredOptions | async; track option) {
+              <mat-option [value]="option">{{option}}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+    </div>
+    <div class="header-content">
+        <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="filter_alt"></mat-icon>
+    </div>
+
+    </div>
   </form>
+
 
 </div>

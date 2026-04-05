@@ -7,7 +7,40 @@
   background-color: #f4f7f9; /* Fundo levemente acinzentado para destacar o card */
   padding: 20px;
 }
+/* Container principal que segura o input e o ícone */
+.header-search {
+  display: flex;
+  align-items: center; /* Alinha o input e o ícone verticalmente ao centro */
+  gap: 15px;           /* Espaço entre o campo de busca e o ícone da casa */
+  width: 100%;
+}
 
+/* A primeira div .header-content (que contém o mat-form-field) */
+.header-search .header-content:first-child {
+  flex-grow: 1;        /* Faz esta div ocupar todo o espaço restante à esquerda */
+  /* justify-content: center; // Removido, pois flex-grow: 1 já distribui o espaço e o mat-form-field ocupa 100% da largura */
+  align-items: center; /* Alinha o conteúdo verticalmente ao centro para consistência */
+  
+}
+
+/* Garante que o Angular Material ocupe 100% da largura da sua div pai */
+.full-width {
+  width: 100%;
+}
+
+/* A segunda div .header-content (que contém o ícone da casa) */
+.header-search .header-content:last-child {
+  flex-shrink: 0;      /* Impede que o ícone encolha */
+  display: flex;
+  align-items: flex-start; /* Alinha o ícone verticalmente ao centro */
+  width: auto;  
+  justify-content: center;     /* O ícone ocupará apenas o espaço necessário */
+}
+
+/* Ajuste opcional para remover margens padrão do Material que podem desalinhá-lo */
+.mat-mdc-form-field {
+  display: block;
+}
 /* O "Card" do formulário */
 .custom-card {
   background: #ffffff;
@@ -46,4 +79,11 @@
 ::ng-deep .mat-mdc-form-field-focus-indicator {
   /* Cor de destaque suave ao clicar */
   color: #6200ee;
+}
+
+/* Ajuste para remover o espaço reservado para hints/erros do Angular Material */
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  height: 0 !important; /* Remove a altura reservada para hints/erros */
+  margin: 0 !important;  /* Remove qualquer margem que possa estar empurrando */
+  overflow: hidden !important; /* Garante que nenhum conteúdo transborde */
 }
