@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ChangePasswordDTO, ForgotPasswordDTO } from '../model/forgot-password.model';
 import { SimpleMessageReturn } from '../model/forgot-password.model';
-import { environment } from '../../../../environments';
+import { environment } from '../../../../../environments';
 @Injectable({
   providedIn: 'root'
 })

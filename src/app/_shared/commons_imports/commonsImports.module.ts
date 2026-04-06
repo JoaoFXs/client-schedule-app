@@ -12,6 +12,13 @@ import { Router } from "@angular/router";
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { GoogleSigninButtonModule } from "@abacritt/angularx-social-login";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { AsyncPipe } from "@angular/common";
+import {Component} from '@angular/core';
+import {MatTableModule} from '@angular/material/table';
 @NgModule({
     declarations: [],
     imports: [CommonModule,
@@ -21,10 +28,20 @@ import { GoogleSigninButtonModule } from "@abacritt/angularx-social-login";
               MatButtonModule,
               MatToolbarModule,
               MatMenuModule,
+              MatFormFieldModule,
+              MatInputModule,
+              MatSelectModule,
+               FormsModule,
+            MatFormFieldModule,
+            MatInputModule,
+            MatAutocompleteModule,
+            ReactiveFormsModule,
+            AsyncPipe,
             MatSidenavModule,
             FormsModule,
             NgxMaskDirective,
             MatProgressSpinnerModule,
+              MatTableModule,
             /** Social Login Modules */
             GoogleSigninButtonModule
               ],
@@ -40,7 +57,14 @@ import { GoogleSigninButtonModule } from "@abacritt/angularx-social-login";
           NgxMaskDirective,
           MatProgressSpinnerModule,
           /** Social Login Modules */
-            GoogleSigninButtonModule
+            GoogleSigninButtonModule,
+            MatInputModule,
+            MatFormFieldModule,
+            MatSelectModule,
+            MatAutocompleteModule,
+            ReactiveFormsModule,
+            AsyncPipe,
+            MatTableModule
         ],
     providers: [
       provideNgxMask()]

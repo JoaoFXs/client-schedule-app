@@ -4,9 +4,9 @@ import { ForgotPasswordService } from './services/forgot-password.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { tap, timeout, takeUntil, catchError, EMPTY } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
-import { NotificationServiceService } from '../../_shared/services/notification-service.service';
-import { PasswordValidationUtils } from '../../_shared/utils/password-validation-utils';
-import { REGEX_PATTERNS} from '../../_shared/constants/regex.constants';
+import { NotificationServiceService } from '../../../_shared/services/notification-service.service';
+import { PasswordValidationUtils } from '../../../_shared/utils/password-validation-utils';
+import { REGEX_PATTERNS} from '../../../_shared/constants/regex.constants';
 import { Subject } from 'rxjs';
 @Component({
   selector: 'app-forgot-password',

@@ -8,10 +8,10 @@ import { Validators } from '@angular/forms';
 import { matchPasswordValidator } from './validators/match-password-validator';
 import { Router } from '@angular/router';
 import { SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
-import { REGEX_PATTERNS } from '../../_shared/constants/regex.constants';
+import { REGEX_PATTERNS } from '../../../_shared/constants/regex.constants';
 import { Subject,takeUntil, filter, switchMap,tap, EMPTY, catchError,  } from 'rxjs';
-import { NotificationServiceService } from '../../_shared/services/notification-service.service';
-import { PasswordValidationUtils } from '../../_shared/utils/password-validation-utils';
+import { NotificationServiceService } from '../../../_shared/services/notification-service.service';
+import { PasswordValidationUtils } from '../../../_shared/utils/password-validation-utils';
 @Component({
   selector: 'app-login',
   standalone: false,

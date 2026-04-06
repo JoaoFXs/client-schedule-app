@@ -4,7 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { LoginDTO, TokenDTO, TokenPayload } from '../model/login.model';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { SocialAuthService } from '@abacritt/angularx-social-login';
-import { environment } from '../../../../environments';
+import { environment } from '../../../../../environments';
 @Injectable({
   providedIn: 'root'
 })
