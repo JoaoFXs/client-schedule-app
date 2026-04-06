@@ -17,7 +17,8 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AsyncPipe } from "@angular/common";
-
+import {Component} from '@angular/core';
+import {MatTableModule} from '@angular/material/table';
 @NgModule({
     declarations: [],
     imports: [CommonModule,
@@ -40,7 +41,7 @@ import { AsyncPipe } from "@angular/common";
             FormsModule,
             NgxMaskDirective,
             MatProgressSpinnerModule,
-  
+              MatTableModule,
             /** Social Login Modules */
             GoogleSigninButtonModule
               ],
@@ -62,7 +63,8 @@ import { AsyncPipe } from "@angular/common";
             MatSelectModule,
             MatAutocompleteModule,
             ReactiveFormsModule,
-            AsyncPipe
+            AsyncPipe,
+            MatTableModule
         ],
     providers: [
       provideNgxMask()]
