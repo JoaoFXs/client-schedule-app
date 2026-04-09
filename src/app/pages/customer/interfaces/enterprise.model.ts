@@ -26,3 +26,19 @@ export interface filters{
     neighBorhood: string;
 }
 
+export interface enterprise{
+    name: string;
+    description: string;
+    phone: string;
+    email: string;
+    website: string;
+    service: string;
+    address: string;
+    number: string;
+    neighborhood: string;
+    state: string;
+    city: string;
+    UF: string;
+    cep: string;
+    filePublicUrl: string;
+}

@@ -19,6 +19,8 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AsyncPipe } from "@angular/common";
 import {Component} from '@angular/core';
 import {MatTableModule} from '@angular/material/table';
+
+import {MatCardModule} from '@angular/material/card';
 @NgModule({
     declarations: [],
     imports: [CommonModule,
@@ -43,7 +45,8 @@ import {MatTableModule} from '@angular/material/table';
             MatProgressSpinnerModule,
               MatTableModule,
             /** Social Login Modules */
-            GoogleSigninButtonModule
+            GoogleSigninButtonModule,
+            MatCardModule
               ],
     exports: [CommonModule, 
               RouterModule, 
@@ -64,7 +67,8 @@ import {MatTableModule} from '@angular/material/table';
             MatAutocompleteModule,
             ReactiveFormsModule,
             AsyncPipe,
-            MatTableModule
+            MatTableModule,
+            MatCardModule
         ],
     providers: [
       provideNgxMask()]

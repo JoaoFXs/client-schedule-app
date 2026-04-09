@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { inject } from '@angular/core';
 import { environment } from '../../../../environments';
-import { content, filters } from '../interfaces/enterprise.model';
+import { content, enterprise, filters } from '../interfaces/enterprise.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -16,6 +16,10 @@ export class MainSearchService {
 
   getAllServices(): Observable<content[]> {
     return this.http.get<content[]>(`${this.baseUrl}enterprise/filters`);
+  }
+
+  getAllEnterprises(): Observable<enterprise[]> {
+    return this.http.get<enterprise[]>(`${this.baseUrl}enterprise`);
   }
 
 

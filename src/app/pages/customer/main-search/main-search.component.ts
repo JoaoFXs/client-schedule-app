@@ -3,7 +3,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { OnInit } from '@angular/core';
 import { MainSearchService } from '../services/main-search.service';
-import { content, filters } from '../interfaces/enterprise.model';
+import { content, enterprise, filters } from '../interfaces/enterprise.model';
 @Component({
   selector: 'app-main-search',
   standalone: false,
@@ -16,7 +16,9 @@ export class MainSearchComponent implements OnInit {
   toggle: boolean = false;
   filteredOptions: Observable<string[]>;
   enterprises: any[] = []; // Aqui você pode definir a estrutura do seu array de empresas
-  
+
+  enterprisesContent: any[] = [];
+
   ELEMENT_DATA: filters[] = []
   displayedColumns: string[] = ['service'];
   filterData = this.ELEMENT_DATA;
@@ -33,6 +35,7 @@ export class MainSearchComponent implements OnInit {
 
   ngOnInit() {
     this.fillFilters();
+    this.fillEnterprises();
   }
 
   private _filter(value: string): string[] {
@@ -58,6 +61,18 @@ export class MainSearchComponent implements OnInit {
         this.ELEMENT_DATA = data.content as filters[]; 
         this.filterData = [...this.ELEMENT_DATA];
         console.log('Lista de filtros carregada:', this.ELEMENT_DATA);
+      },
+      error: (err) => {
+        console.error('Erro ao buscar dados do servidor:', err);
+      }
+    });
+  }
+
+  fillEnterprises(){
+    this.mainSearchService.getAllEnterprises().subscribe({
+      next: (data: any) => {
+        this.enterprisesContent = data.content as enterprise[];
+        console.log('Lista de empresas carregada:', this.enterprisesContent);
       },
       error: (err) => {
         console.error('Erro ao buscar dados do servidor:', err);
