@@ -16,7 +16,7 @@
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   position: relative; /* Referência para a tabela */
 }
 
@@ -162,4 +162,92 @@
 
 .mat-mdc-form-field {
   display: block;
+}
+
+.enterprises-section {
+  display: grid;
+  /* Cria colunas de no mínimo 300px que se ajustam sozinhas */
+  grid-template-columns: repeat(auto-fit, minmax(380px, 380px));
+  gap: 20px;
+  width: 100%;
+  justify-items: center; /* Centraliza o card dentro da célula do grid */
+  padding-top: 50px;
+}
+
+/* Container do Card */
+.enterprise-card {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 12px; /* Cantos mais arredondados dão aspeto moderno */
+  overflow: hidden;    /* Garante que a imagem não saia dos cantos arredondados */
+  border: 1px solid #f0f0f0; /* Um contorno subtil ajuda na definição */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transição fluida */
+  height: 100%;
+}
+
+/* Efeito de Hover (Elevação) */
+.enterprise-card:hover {
+  cursor: pointer;
+  transform: translateY(-5px); /* Move ligeiramente para cima */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1); /* Sombra mais suave e espalhada */
+  border-color: #e0e0e0;
+}
+
+/* Imagem do Empreendimento */
+.enterprises-section img {
+  width: 100%;
+  height: 250px; /* Reduzi um pouco para equilibrar o visual */
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+/* Efeito de Zoom na imagem ao passar o rato no card */
+.enterprise-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Cabeçalho */
+.enterprise-card mat-card-header {
+  padding: 16px 20px 0;
+  display: flex;
+  flex-direction: column; /* Título e subtítulo empilhados costumam ler-se melhor */
+  align-items: flex-start;
+  gap: 4px;
+}
+
+/* Título */
+.enterprise-card mat-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333333; /* Um cinza mais escuro para melhor contraste */
+  margin: 0;
+}
+
+/* Subtítulo */
+.enterprise-card mat-card-subtitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #888888;
+  margin-bottom: 8px;
+}
+
+/* Conteúdo Central */
+.enterprise-card mat-card-content {
+  padding: 0 20px 20px;
+  color: #666666;
+  line-height: 1.5; /* Melhora a legibilidade do texto */
+}
+
+/* Ações (Botões) no fundo */
+.enterprise-card mat-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 20px;
+  background-color: #fafafa; /* Um fundo ligeiramente diferente destaca a área de ação */
+  margin-top: auto; 
+  border-top: 1px solid #f0f0f0;
 }

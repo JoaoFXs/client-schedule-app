@@ -33,6 +33,26 @@
           </div>
         </div>
       </form>
+      <content class="enterprises-section">
+        @for (enterprise of enterprisesContent; track $index) {
+          <mat-card class="enterprise-card" appearance="outlined">
+            <mat-card-header>
+              <!-- <div mat-card-avatar class="example-header-image"></div> -->
+              <mat-card-title>{{enterprise.name}}</mat-card-title>
+            </mat-card-header>
+            <img mat-card-image src={{enterprise.filePublicUrl}} alt="Photo of a Shiba Inu">
+            <mat-card-content>
+              <p>
+                {{enterprise.description}}
+              </p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button matButton>AGENDAR</button>
+              <button matButton><mat-icon>share</mat-icon></button>
+            </mat-card-actions>
+          </mat-card>
+      }
+      </content>
 
       @if (toggle) {
         <div class="table-filter">
@@ -80,5 +100,16 @@
         </div>
       }
 
-    </div> </div>
+    <mat-paginator [length]="paginationUtils.length"
+              [pageSize]="paginationUtils.pageSize"
+              [pageIndex]="paginationUtils.pageIndex"
+              (page)="handlePageEvent($event)"
+              [pageSizeOptions]="paginationUtils.pageSizeOptions"
+              aria-label="Select page">
+            
+      </mat-paginator>
+  
+    </div> 
+    
+  </div>
 </div>

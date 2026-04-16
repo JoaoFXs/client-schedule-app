@@ -3,7 +3,8 @@ import { map, Observable, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { OnInit } from '@angular/core';
 import { MainSearchService } from '../services/main-search.service';
-import { content, filters } from '../interfaces/enterprise.model';
+import { content, enterprise, filters } from '../interfaces/enterprise.model';
+import { PaginationUtils } from '../../../_shared/utils/pagination-utils';
 @Component({
   selector: 'app-main-search',
   standalone: false,
@@ -12,18 +13,20 @@ import { content, filters } from '../interfaces/enterprise.model';
 })
 export class MainSearchComponent implements OnInit {
   myControl = new FormControl('');
+  options = new Set<number>();
 
   toggle: boolean = false;
   filteredOptions: Observable<string[]>;
   enterprises: any[] = []; // Aqui você pode definir a estrutura do seu array de empresas
-  
+  enterprisesContent: any[] = [];
   ELEMENT_DATA: filters[] = []
   displayedColumns: string[] = ['service'];
   filterData = this.ELEMENT_DATA;
   clickedRows = new Set<filters>();
   
   constructor(
-    private mainSearchService: MainSearchService
+    private mainSearchService: MainSearchService,
+    public paginationUtils: PaginationUtils
   ) {
     this.filteredOptions = this.myControl.valueChanges.pipe(
       startWith(''),
@@ -33,13 +36,20 @@ export class MainSearchComponent implements OnInit {
 
   ngOnInit() {
     this.fillFilters();
+    this.fillEnterprises();
   }
 
+  /**
+   * A função _filter() é responsável por filtrar a lista de empresas com base no valor de entrada fornecido pelo usuário. Ela converte o valor de entrada para minúsculas e, em seguida, filtra a lista de empresas, retornando apenas aquelas cujo serviço inclui o valor de entrada (também convertido para minúsculas). O resultado é uma lista de empresas que correspondem ao critério de pesquisa do usuário.
+   */
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.enterprises.filter(enterprise => enterprise.service.toLowerCase().includes(filterValue));
   }
 
+  /**
+   * A função selectedRow() é responsável por gerenciar a seleção de linhas na interface do usuário. Ela recebe um objeto do tipo 'filters' como parâmetro, que representa a linha selecionada. A função verifica se a linha já está presente no conjunto 'clickedRows'. Se estiver, ela remove a linha do conjunto; caso contrário, adiciona a linha ao conjunto. Isso permite que o usuário selecione ou desmarque linhas, e o estado das linhas selecionadas é mantido no conjunto 'clickedRows'.
+   */
   selectedRow(row: filters) {
     console.log('Linha selecionada:', row);
 
@@ -48,10 +58,18 @@ export class MainSearchComponent implements OnInit {
     console.log('Linhas selecionadas:', this.clickedRows);
   }
 
+  /**
+   * A função toggleFilter() é responsável por alternar a visibilidade dos filtros na interface do usuário. Ela inverte o valor booleano da variável 'toggle', que pode ser usada para mostrar ou esconder os filtros no template HTML.
+   */
   toggleFilter(){
     this.toggle = !this.toggle;
   }
 
+
+  /**
+   * Preenche a lista de filtros e empresas, além de configurar a paginação com base no total de empresas retornado pelo backend.
+   * A função fillFilters() busca os serviços disponíveis e os armazena em ELEMENT_DATA, que é usado para exibir os filtros.
+   */
   fillFilters(){
    this.mainSearchService.getAllServices().subscribe({
       next: (data: any) => {
@@ -64,4 +82,35 @@ export class MainSearchComponent implements OnInit {
       }
     });
   }
+
+  /**
+   *  A função fillEnterprises() busca as empresas com base na página atual e tamanho da página, atualiza a lista de empresas exibidas e configura a paginação.
+   */
+  fillEnterprises(){
+    this.mainSearchService.getAllEnterprises(this.paginationUtils.pageIndex, this.paginationUtils.pageSize).subscribe({
+      next: (data: any) => {
+        this.enterprisesContent = data.content as enterprise[];
+        this.paginationUtils.length = data.totalElements;
+        this.paginationUtils.pageSize = data.size;
+        this.paginationUtils.setPageSizeOptions(this.paginationUtils.length);
+        console.log('Lista de empresas carregada:', this.enterprisesContent);
+      },
+      error: (err) => {
+        console.error('Erro ao buscar dados do servidor:', err);
+      }
+    });
+  }
+
+  /**
+   * O método handlePageEvent() é chamado quando o usuário interage com a paginação, atualizando os parâmetros de página e recarregando as empresas.
+   * @param event 
+   */
+  handlePageEvent(event: any) {
+    this.paginationUtils.pageIndex = event.pageIndex;
+    this.paginationUtils.pageSize = event.pageSize;
+
+    // Chamamos o backend novamente com os novos parâmetros
+    this.fillEnterprises();
+  }
+  
 }
