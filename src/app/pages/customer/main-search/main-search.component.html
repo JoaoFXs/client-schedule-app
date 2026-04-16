@@ -15,7 +15,7 @@
                      [formControl]="myControl"
                      [matAutocomplete]="auto">
               
-              <mat-icon matSuffix>search</mat-icon>
+              <mat-icon matSuffix (click)="fillEnterprises()">search</mat-icon>
               
               <mat-autocomplete #auto="matAutocomplete">
                 @for (option of filteredOptions | async; track option) {

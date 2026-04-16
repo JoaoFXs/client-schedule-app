@@ -18,11 +18,13 @@ export class MainSearchService {
     return this.http.get<content[]>(`${this.baseUrl}enterprise/filters`);
   }
 
-  getAllEnterprises(page: number = 0, size: number = 10): Observable<enterprise[]> {
+  getAllEnterprises(page: number = 0, size: number = 10, selectedFilters: Set<filters>): Observable<enterprise[]> {
     const params: any = {
       page: page,
-      size: size
+      size: size,
+      service: Array.from(selectedFilters).map(filter => filter.service).join(',') // Converte o Set de filtros em uma string separada por vírgulas
     };
+
     return this.http.get<enterprise[]>(`${this.baseUrl}enterprise`, { params });
   }
 
