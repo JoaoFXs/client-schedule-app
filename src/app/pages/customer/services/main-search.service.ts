@@ -18,8 +18,12 @@ export class MainSearchService {
     return this.http.get<content[]>(`${this.baseUrl}enterprise/filters`);
   }
 
-  getAllEnterprises(): Observable<enterprise[]> {
-    return this.http.get<enterprise[]>(`${this.baseUrl}enterprise`);
+  getAllEnterprises(page: number = 0, size: number = 10): Observable<enterprise[]> {
+    const params: any = {
+      page: page,
+      size: size
+    };
+    return this.http.get<enterprise[]>(`${this.baseUrl}enterprise`, { params });
   }
 
 

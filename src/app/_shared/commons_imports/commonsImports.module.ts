@@ -19,7 +19,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AsyncPipe } from "@angular/common";
 import {Component} from '@angular/core';
 import {MatTableModule} from '@angular/material/table';
-
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatCardModule} from '@angular/material/card';
 @NgModule({
     declarations: [],
@@ -46,7 +46,8 @@ import {MatCardModule} from '@angular/material/card';
               MatTableModule,
             /** Social Login Modules */
             GoogleSigninButtonModule,
-            MatCardModule
+            MatCardModule,
+            MatPaginatorModule
               ],
     exports: [CommonModule, 
               RouterModule, 
@@ -68,7 +69,8 @@ import {MatCardModule} from '@angular/material/card';
             ReactiveFormsModule,
             AsyncPipe,
             MatTableModule,
-            MatCardModule
+            MatCardModule,
+            MatPaginatorModule
         ],
     providers: [
       provideNgxMask()]

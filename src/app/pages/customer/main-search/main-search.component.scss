@@ -16,7 +16,7 @@
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   width: 100%;
-  max-width: 1500px;
+  max-width: 1200px;
   position: relative; /* Referência para a tabela */
 }
 
@@ -167,7 +167,7 @@
 .enterprises-section {
   display: grid;
   /* Cria colunas de no mínimo 300px que se ajustam sozinhas */
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(380px, 380px));
   gap: 20px;
   width: 100%;
   justify-items: center; /* Centraliza o card dentro da célula do grid */

@@ -100,7 +100,16 @@
         </div>
       }
 
-    </div> 
+    <mat-paginator [length]="length"
+              [pageSize]="pageSize"
+              [pageIndex]="pageIndex"
+              (page)="handlePageEvent($event)"
+              [pageSizeOptions]="pageSizeOptions"
+              aria-label="Select page">
+            
+      </mat-paginator>
   
+    </div> 
+    
   </div>
 </div>
