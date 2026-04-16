@@ -19,7 +19,7 @@ export class MainSearchComponent implements OnInit {
   filteredOptions: Observable<string[]>;
   enterprises: any[] = []; // Aqui você pode definir a estrutura do seu array de empresas
   enterprisesContent: any[] = [];
-  ELEMENT_DATA: filters[] = []
+  ELEMENT_DATA: [] = [];
   displayedColumns: string[] = ['service'];
   filterData = this.ELEMENT_DATA;
   clickedRows = new Set<filters>();
@@ -73,7 +73,7 @@ export class MainSearchComponent implements OnInit {
   fillFilters(){
    this.mainSearchService.getAllServices().subscribe({
       next: (data: any) => {
-        this.ELEMENT_DATA = data.content as filters[]; 
+        this.ELEMENT_DATA = data.content as []; 
         this.filterData = [...this.ELEMENT_DATA];
         console.log('Lista de filtros carregada:', this.ELEMENT_DATA);
       },
@@ -87,7 +87,7 @@ export class MainSearchComponent implements OnInit {
    *  A função fillEnterprises() busca as empresas com base na página atual e tamanho da página, atualiza a lista de empresas exibidas e configura a paginação.
    */
   fillEnterprises(){
-    this.mainSearchService.getAllEnterprises(this.paginationUtils.pageIndex, this.paginationUtils.pageSize).subscribe({
+    this.mainSearchService.getAllEnterprises(this.paginationUtils.pageIndex, this.paginationUtils.pageSize, this.clickedRows).subscribe({
       next: (data: any) => {
         this.enterprisesContent = data.content as enterprise[];
         this.paginationUtils.length = data.totalElements;
