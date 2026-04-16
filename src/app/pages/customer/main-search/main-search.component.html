@@ -100,11 +100,11 @@
         </div>
       }
 
-    <mat-paginator [length]="length"
-              [pageSize]="pageSize"
-              [pageIndex]="pageIndex"
+    <mat-paginator [length]="paginationUtils.length"
+              [pageSize]="paginationUtils.pageSize"
+              [pageIndex]="paginationUtils.pageIndex"
               (page)="handlePageEvent($event)"
-              [pageSizeOptions]="pageSizeOptions"
+              [pageSizeOptions]="paginationUtils.pageSizeOptions"
               aria-label="Select page">
             
       </mat-paginator>
