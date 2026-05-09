@@ -1,0 +1,93 @@
+ .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      margin: 16px;
+    }
+    // animação do ícone pulando
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0.33, 0, 0.66, 0);
+      }
+      50% {
+        transform: translateY(-12px);
+        animation-timing-function: cubic-bezier(0.33, 1, 0.66, 1);
+      }
+    }
+    .icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #e8f0fe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      animation: bounce 1.2s infinite;
+    }
+
+    .icon-circle span {
+      font-size: 32px;
+      color: #1a73e8;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 10px;
+      color: #1a1a1a;
+    }
+
+    p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin: 0 0 24px;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      padding: 12px;
+      border-radius: 8px;
+      background: #1a73e8;
+      color: #fff;
+      border: none;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { background: #1558b0; }
+
+    .btn-ghost {
+      padding: 12px;
+      border-radius: 8px;
+      background: transparent;
+      color: #666;
+      border: 1px solid #ddd;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-ghost:hover { background: #f5f5f5; }

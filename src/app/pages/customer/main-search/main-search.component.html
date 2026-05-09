@@ -1,3 +1,8 @@
+ <app-permission-location
+      #prompt
+      (permitted)="onPermission($event)"
+  />
+
 <div class="main-container">
   <div class="custom-card">
     <h2 class="form-title">Selecione uma Opção</h2>
@@ -34,7 +39,7 @@
           <div class="header-content">
             <mat-icon class="filter-icon" 
                       fontIcon="location_on" 
-                      (click)="getAddress()"
+                      (click)="prompt.open()"
                       >
             </mat-icon>
           </div>

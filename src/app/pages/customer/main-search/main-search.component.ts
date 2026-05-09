@@ -127,7 +127,6 @@ export class MainSearchComponent implements OnInit {
    getAddress() {
     this.loading = true;
     this.error = undefined;
-
     this.locationService.getCurrentAddress().subscribe({
       next: addr => {
         this.address = addr;
@@ -140,4 +139,14 @@ export class MainSearchComponent implements OnInit {
       }
     });
   }
+
+ 
+
+    onPermission(permitted: boolean) {
+      if (permitted) {
+        this.getAddress();
+      } else {
+        this.error = 'Permissão negada para acessar a localização.';
+      }
+    }
 }

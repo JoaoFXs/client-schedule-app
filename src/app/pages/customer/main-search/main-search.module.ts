@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MainSearchComponent } from './main-search.component';
 import { CommonsImports } from '../../../_shared/commons_imports/commonsImports.module';
 import { MainSearchRoutingModule } from './main-search-routing.module';
+import { PermissionLocationModule } from '../../../_shared/component/permission-location/permission-location.module';
+import { PermissionLocationComponent } from '../../../_shared/component/permission-location/permission-location.component';
 
 
 
@@ -11,7 +13,8 @@ import { MainSearchRoutingModule } from './main-search-routing.module';
   imports: [
     CommonModule,
     CommonsImports,
-    MainSearchRoutingModule 
+    MainSearchRoutingModule,
+    PermissionLocationModule
   ],
   exports: [
     MainSearchComponent
