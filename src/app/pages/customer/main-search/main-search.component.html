@@ -53,8 +53,8 @@
           </mat-card>
       }
       </content>
-
       @if (toggle) {
+        
         <div class="table-filter">
           <table mat-table [dataSource]="filterData" class="mat-elevation-z0">
             
@@ -63,6 +63,7 @@
                 <mat-icon class="icon-service">storefront</mat-icon>
                 Serviços
               </th>
+              
               <td mat-cell *matCellDef="let element">
                 <div class="cell-content">
                   <span>{{element.service}}</span>

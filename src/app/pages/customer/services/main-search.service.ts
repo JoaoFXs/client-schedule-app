@@ -14,15 +14,20 @@ export class MainSearchService {
 
   private readonly baseUrl = environment.apiUrl;
 
-  getAllServices(): Observable<content[]> {
-    return this.http.get<content[]>(`${this.baseUrl}enterprise/filters`);
+  getAllServices(): Observable<enterprise[]> {
+    return this.http.get<enterprise[]>(`${this.baseUrl}enterprise/filters`);
   }
 
-  getAllEnterprises(page: number = 0, size: number = 10, selectedFilters: Set<filters>): Observable<enterprise[]> {
+  getAllEnterprises(page: number = 0, size: number = 10, selectedFilters: Set<filters>, myControl: string): Observable<enterprise[]> {
+    if(myControl == null){
+      myControl = ''
+    }
+    
     const params: any = {
       page: page,
       size: size,
-      service: Array.from(selectedFilters).map(filter => filter.service).join(',') // Converte o Set de filtros em uma string separada por vírgulas
+      service: Array.from(selectedFilters).map(filter => filter.service).join(','), // Converte o Set de filtros em uma string separada por vírgulas,
+      name: myControl // Adiciona o valor do campo de controle ao objeto de parâmetros
     };
 
     return this.http.get<enterprise[]>(`${this.baseUrl}enterprise`, { params });
