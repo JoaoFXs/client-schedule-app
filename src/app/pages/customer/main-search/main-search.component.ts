@@ -5,6 +5,8 @@ import { OnInit } from '@angular/core';
 import { MainSearchService } from '../services/main-search.service';
 import { content, enterprise, filters } from '../interfaces/enterprise.model';
 import { PaginationUtils } from '../../../_shared/utils/pagination-utils';
+import { Address } from '../../../_shared/interface/address.model';
+import { LocationService } from '../../../_shared/services/location/location.service';
 @Component({
   selector: 'app-main-search',
   standalone: false,
@@ -12,7 +14,7 @@ import { PaginationUtils } from '../../../_shared/utils/pagination-utils';
   styleUrl: './main-search.component.scss',
 })
 export class MainSearchComponent implements OnInit {
-  myControl = new FormControl('');
+  myControl = new FormControl();
   options = new Set<number>();
 
   toggle: boolean = false;
@@ -23,10 +25,13 @@ export class MainSearchComponent implements OnInit {
   displayedColumns: string[] = ['service'];
   filterData = this.ELEMENT_DATA;
   clickedRows = new Set<filters>();
-  
+  address?: Address;
+  loading = false;
+  error?: string;
   constructor(
     private mainSearchService: MainSearchService,
-    public paginationUtils: PaginationUtils
+    public paginationUtils: PaginationUtils,
+    private locationService: LocationService
   ) {
     this.filteredOptions = this.myControl.valueChanges.pipe(
       startWith(''),
@@ -56,6 +61,7 @@ export class MainSearchComponent implements OnInit {
     this.clickedRows.has(row) ? this.clickedRows.delete(row) : this.clickedRows.add(row);
  
     console.log('Linhas selecionadas:', this.clickedRows);
+    this.fillEnterprises();
   }
 
   /**
@@ -73,7 +79,7 @@ export class MainSearchComponent implements OnInit {
   fillFilters(){
    this.mainSearchService.getAllServices().subscribe({
       next: (data: any) => {
-        this.ELEMENT_DATA = data.content as []; 
+        this.ELEMENT_DATA = data as []; 
         this.filterData = [...this.ELEMENT_DATA];
         console.log('Lista de filtros carregada:', this.ELEMENT_DATA);
       },
@@ -87,7 +93,12 @@ export class MainSearchComponent implements OnInit {
    *  A função fillEnterprises() busca as empresas com base na página atual e tamanho da página, atualiza a lista de empresas exibidas e configura a paginação.
    */
   fillEnterprises(){
-    this.mainSearchService.getAllEnterprises(this.paginationUtils.pageIndex, this.paginationUtils.pageSize, this.clickedRows).subscribe({
+    console.log('Buscando empresas com os seguintes parâmetros: ');
+    console.log('Índice da página:', this.paginationUtils.pageIndex);
+    console.log('Tamanho da página:', this.paginationUtils.pageSize);
+    console.log('Filtros selecionados:', this.clickedRows);
+    console.log('Valor do campo de controle:', this.myControl.value);
+    this.mainSearchService.getAllEnterprises(this.paginationUtils.pageIndex, this.paginationUtils.pageSize, this.clickedRows, this.myControl.value).subscribe({
       next: (data: any) => {
         this.enterprisesContent = data.content as enterprise[];
         this.paginationUtils.length = data.totalElements;
@@ -113,4 +124,20 @@ export class MainSearchComponent implements OnInit {
     this.fillEnterprises();
   }
   
+   getAddress() {
+    this.loading = true;
+    this.error = undefined;
+
+    this.locationService.getCurrentAddress().subscribe({
+      next: addr => {
+        this.address = addr;
+        console.log('Endereço obtido:', this.address);
+        this.loading = false;
+      },
+      error: err => {
+        this.error = `Erro: ${err}`;
+        this.loading = false;
+      }
+    });
+  }
 }
