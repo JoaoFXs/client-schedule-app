@@ -42,8 +42,6 @@ export class MainSearchComponent implements OnInit {
   ngOnInit() {
     this.fillFilters();
     this.fillEnterprises();
-    this.getAddress();
-      console.log('Endereço obtido:', this.address);
   }
 
   /**
