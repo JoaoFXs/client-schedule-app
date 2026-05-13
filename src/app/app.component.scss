@@ -1,0 +1,157 @@
+/* ===== MAT-CARD ===== */
+::ng-deep .enterprise-card.mat-mdc-card {
+  background: #ffffff !important;
+  box-shadow: none !important;
+  border-radius: 12px !important;
+}
+
+::ng-deep .enterprise-card .mat-mdc-card-header {
+  padding: 16px 20px 0 !important;
+}
+
+::ng-deep .enterprise-card .mat-mdc-card-title {
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  color: #333333 !important;
+}
+
+::ng-deep .enterprise-card .mat-mdc-card-content {
+  padding: 0 20px 20px !important;
+  color: #666666 !important;
+}
+
+::ng-deep .enterprise-card .mat-mdc-card-actions {
+  padding: 12px 20px !important;
+}
+
+/* ===== MAT-PAGINATOR ===== */
+::ng-deep .mat-mdc-paginator {
+  background: transparent !important;
+  border-radius: 12px !important;
+  margin-top: 16px;
+}
+
+::ng-deep .mat-mdc-paginator-container {
+  justify-content: center !important;
+}
+
+/* ===== MAT-AUTOCOMPLETE ===== */
+::ng-deep .mat-mdc-autocomplete-panel {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+  padding: 4px 0 !important;
+}
+
+::ng-deep .mat-mdc-option {
+  border-radius: 8px !important;
+  margin: 2px 8px !important;
+  font-size: 14px !important;
+}
+
+::ng-deep .mat-mdc-option:hover {
+  background-color: #f5f5f5 !important;
+}
+
+/* ===== MAT-ICON ===== */
+::ng-deep .filter-icon.mat-icon {
+  color: #404041 !important;
+  font-size: 24px !important;
+}
+
+/* ===== MAT-BUTTON ===== */
+::ng-deep .enterprise-card .mat-mdc-button {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  color: #333 !important;
+}
+
+::ng-deep .enterprise-card .mat-mdc-button:hover {
+  background-color: #f5f5f5 !important;
+}
+
+/* ===== MAT-FORM-FIELD OUTLINE ===== */
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__notch,
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__trailing {
+  border-color: #e0e0e0 !important;
+}
+
+::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__notch,
+::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__trailing {
+  border-color: #bdbdbd !important;
+}
+
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: #333 !important;
+  border-width: 1px !important;
+}
+
+/* ===== MAT-TABLE GLASS ===== */
+::ng-deep .table-section.mat-mdc-table {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+::ng-deep .table-section .mat-mdc-header-row {
+  background: transparent !important;
+}
+
+::ng-deep .table-section .mat-mdc-header-cell {
+  background: #ffffff;
+  border-radius: 12px;
+  border-bottom: none !important;
+  font-weight: 600;
+  color: #333;
+}
+
+::ng-deep .table-section .mat-mdc-row {
+  background: #ffffff;
+  border-radius: 12px;
+  border-bottom: none !important;
+  margin-bottom: 8px;
+}
+
+::ng-deep .table-section .mat-mdc-row:hover .mat-mdc-cell {
+  background: #f5f5f5;
+}
+
+::ng-deep .table-section .mat-mdc-cell {
+  border-bottom: none !important;
+  border-radius: 12px;
+}
+
+/* Espaço entre rows simulado via outline */
+::ng-deep .table-section .mat-mdc-row {
+  outline: 1px solid #f0f0f0;
+  margin-bottom: 8px;
+}
+
+/* Remove a linha divisória padrão do Material */
+::ng-deep .table-section .mdc-data-table__row:last-child .mat-mdc-cell {
+  border-bottom: none !important;
+}
+
+/* Header arredondado quando expandido */
+::ng-deep .table-section .mat-mdc-header-cell:first-child {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Header totalmente arredondado quando colapsado (sem rows) */
+::ng-deep .table-section:not(:has(.mat-mdc-row)) .mat-mdc-header-cell {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Rows com sombra */
+::ng-deep .table-section .mat-mdc-row {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+
+::ng-deep .table-section .mat-mdc-row:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}

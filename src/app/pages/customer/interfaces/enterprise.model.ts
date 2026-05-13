@@ -23,8 +23,23 @@ export interface filters{
     service: string;
     city: string;
     cep: string;
+    uf: string;
     neighBorhood: string;
 }
+
+export interface filterRequest{
+    service: [];
+    uf: [];
+}
+
+export interface UF{
+    name: string;
+}
+
+export interface Service{
+    name: string;
+}
+
 
 export interface enterprise{
     name: string;

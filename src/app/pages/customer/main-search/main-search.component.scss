@@ -110,12 +110,53 @@
 
 .table-filter table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 10px;
+  border-collapse: collapse;
 
   @media (max-width: 768px) {
     border-spacing: 0 6px;
   }
+}
+
+.table-filter th {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  font-weight: 500;
+  font-size: 14px;
+  border-bottom: 1px 0px 1px 0px solid #606060;
+}
+
+.table-filter th:first-child {
+  border-top-left-radius: 12px;
+}
+.table-filter th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.table-filter th:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.table-filter th{
+  @media (max-width: 768px) {
+    padding: 10px 13px;
+    font-size: 13px;
+  }
+}
+.table-filter
+.table-filter th i,
+.table-filter th mat-icon {
+  color: #404041;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  user-select: none;
 }
 
 .table-filter tbody tr {
@@ -135,15 +176,12 @@
   padding: 14px 15px;
   color: #333;
   font-size: 14px;
-  vertical-align: middle;
-  display: flex;
-  align-items: center;
-
   @media (max-width: 768px) {
     padding: 11px 13px;
     font-size: 13px;
   }
 }
+
 
 .table-filter td i,
 .table-filter td mat-icon {
@@ -164,6 +202,27 @@
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
 }
+.table-section {
+  width: 100%;
+  border-collapse: collapse; /* obrigatório — remove border-spacing */
+  margin-top: 3px;
+  margin-bottom: 0px;
+
+  @media (max-width: 768px) {
+    margin-top: 20px;
+  }
+}
+
+/* Mata qualquer espaço residual dentro da tabela vazia */
+.table-section tr:empty,
+.table-section td:empty,
+.table-section tbody:empty {
+  display: none;
+  height: 0;
+  padding: 0;
+  margin: 0;
+}
+
 
 /* ===== ANGULAR MATERIAL ===== */
 .form-title {
@@ -269,7 +328,7 @@
 }
 
 .enterprise-card:hover img {
-  transform: scale(1.05);
+  transform: scale(1.01);
 }
 
 /* Cabeçalho */

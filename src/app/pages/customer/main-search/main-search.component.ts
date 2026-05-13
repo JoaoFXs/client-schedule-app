@@ -3,7 +3,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { OnInit } from '@angular/core';
 import { MainSearchService } from '../services/main-search.service';
-import { content, enterprise, filters } from '../interfaces/enterprise.model';
+import { content, enterprise, filterRequest, filters, Service, UF } from '../interfaces/enterprise.model';
 import { PaginationUtils } from '../../../_shared/utils/pagination-utils';
 import { Address } from '../../../_shared/interface/address.model';
 import { LocationService } from '../../../_shared/services/location/location.service';
@@ -12,18 +12,24 @@ import { LocationService } from '../../../_shared/services/location/location.ser
   standalone: false,
   templateUrl: './main-search.component.html',
   styleUrl: './main-search.component.scss',
+  
 })
 export class MainSearchComponent implements OnInit {
   myControl = new FormControl();
   options = new Set<number>();
 
   toggle: boolean = false;
+  toggleColumnUf: boolean = false;
+  toggleColumnService: boolean = false;
   filteredOptions: Observable<string[]>;
   enterprises: any[] = []; // Aqui você pode definir a estrutura do seu array de empresas
   enterprisesContent: any[] = [];
-  ELEMENT_DATA: [] = [];
-  displayedColumns: string[] = ['service'];
-  filterData = this.ELEMENT_DATA;
+  displayedColumns: string[] = ['service','enderecos'];
+  serviceFilters: filters[] = [];
+  ufFilters: filters[] = [];
+  ufFiltersBackup: filters[] = [];
+  serviceFiltersBackup: filters[] = [];
+  filterData: any[] = [];
   clickedRows = new Set<filters>();
   address?: Address;
   loading = false;
@@ -79,9 +85,32 @@ export class MainSearchComponent implements OnInit {
   fillFilters(){
    this.mainSearchService.getAllServices().subscribe({
       next: (data: any) => {
-        this.ELEMENT_DATA = data as []; 
-        this.filterData = [...this.ELEMENT_DATA];
-        console.log('Lista de filtros carregada:', this.ELEMENT_DATA);
+        let uf = data.map(
+          (item: any) => {
+            return {
+              uf: item.uf
+            } 
+          }
+        )
+        let service = data.map(
+          (item: any) => {
+            return {
+              service: item.service
+            } 
+          }
+        )
+        console.log('Dados recebidos do servidor:', service);
+        this.filterData = [...service, ...uf];
+        // Deduplica cada coluna separadamente
+        this.serviceFiltersBackup = this.filterData
+          .filter(e => e.service != null)
+          .filter((e, i, arr) => arr.findIndex(x => x.service === e.service) === i);
+
+        this.ufFiltersBackup = this.filterData
+          .filter(e => e.uf != null)
+          .filter((e, i, arr) => arr.findIndex(x => x.uf === e.uf) === i);
+
+        console.log('Lista de filtros carregada:', this.filterData);
       },
       error: (err) => {
         console.error('Erro ao buscar dados do servidor:', err);
@@ -149,4 +178,15 @@ export class MainSearchComponent implements OnInit {
         this.error = 'Permissão negada para acessar a localização.';
       }
     }
+
+    toggleColumn(isUf: boolean = false) {
+      if (isUf) {
+        this.toggleColumnUf = !this.toggleColumnUf;
+        this.ufFilters = this.toggleColumnUf ? this.ufFiltersBackup : [];
+      } else {
+        this.toggleColumnService = !this.toggleColumnService;
+        this.serviceFilters = this.toggleColumnService ? this.serviceFiltersBackup : [];
+      }
+    }
+
 }
