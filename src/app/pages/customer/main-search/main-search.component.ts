@@ -23,18 +23,23 @@ export class MainSearchComponent implements OnInit {
   toggleColumnService: boolean = false;
   toggleColumnCity: boolean = false;
   toggleCitys: boolean = false;
+  toggleAddress: boolean = false;
+  toggleColumnAddress: boolean = false;
 
   filteredOptions: Observable<string[]>;
   enterprises: any[] = [];
   enterprisesContent: any[] = [];
-  displayedColumns: string[] = ['service', 'enderecos', 'cidades'];
+  displayedColumns: string[] = ['service', 'enderecos', 'cidades', 'estados'];
 
   serviceFilters: filters[] = [];
   ufFilters: filters[] = [];
   ufFiltersBackup: filters[] = [];
   serviceFiltersBackup: filters[] = [];
+  addressFiltersBackup: filters[] = [];
   cityFiltersBackup: any[] = [];       // any[] para suportar cityLabel
   originalCityFilters: filters[] = [];
+  originalAddressFilters: filters[] = [];
+
   dataBackup: filters[] = [];
   filterData: any[] = [];
 
@@ -68,11 +73,14 @@ export class MainSearchComponent implements OnInit {
    * Verifica se uma linha está selecionada por comparação de valor,
    * evitando o problema de referência do Set.has().
    */
-  isRowSelected(row: filters): boolean {
-    return [...this.clickedRows].some(
-      r => r.city === row.city && r.uf === row.uf && r.service === row.service
-    );
-  }
+isRowSelected(row: filters): boolean {
+  return [...this.clickedRows].some(
+    r => r.city === row.city 
+      && r.uf === row.uf 
+      && r.service === row.service 
+      && r.address === row.address  // <-- ADICIONAR
+  );
+}
 
   /**
    * Gerencia a seleção/deseleção de linhas e atualiza os filtros de cidade
@@ -85,7 +93,7 @@ export class MainSearchComponent implements OnInit {
     if (exists) {
       this.clickedRows = new Set(
         [...this.clickedRows].filter(
-          r => !(r.city === row.city && r.uf === row.uf && r.service === row.service)
+          r => !(r.city === row.city && r.uf === row.uf && r.service === row.service && r.address === row.address)
         )
       );
     } else {
@@ -96,6 +104,10 @@ export class MainSearchComponent implements OnInit {
     const selectedUfs = [...this.clickedRows]
       .map(r => r.uf)
       .filter(uf => uf != null);
+
+    const selectedCitys = [...this.clickedRows]
+      .map(r => r.city)
+      .filter(city => city != null);
 
     if (selectedUfs.length > 0) {
       this.toggleCitys = true;
@@ -122,6 +134,32 @@ export class MainSearchComponent implements OnInit {
       this.cityFiltersBackup = [...this.originalCityFilters];
     }
 
+
+    if (selectedCitys.length > 0) {
+      this.toggleAddress = true;
+
+      const validAddress = this.dataBackup
+        .filter(e => selectedCitys.includes(e.city))
+        .map(e => e.address);
+
+      // Mantém address original intacto; adiciona addressLabel apenas para exibição
+     this.addressFiltersBackup = this.originalAddressFilters
+              .filter(e => validAddress.includes(e.address))
+              .map(e => {
+                const found = this.dataBackup.find(d => d.address === e.address); // busca tudo de uma vez
+                return {
+                  ...e,
+                  addressLabel: `${e.address}, ${found?.number} - ${found?.city} - ${found?.uf}` // usa found para tudo
+                };
+              });
+
+    } else {
+      // Nenhuma UF selecionada: restaura tudo e fecha a coluna de cidades
+      this.toggleAddress = false;
+      this.toggleColumnAddress = false;
+      this.addressFiltersBackup = [...this.originalAddressFilters];
+    }
+
     this.fillEnterprises();
   }
 
@@ -137,8 +175,9 @@ export class MainSearchComponent implements OnInit {
         const uf = data.map((item: any) => ({ uf: item.uf }));
         const service = data.map((item: any) => ({ service: item.service }));
         const city = data.map((item: any) => ({ city: item.city }));
-
-        this.filterData = [...service, ...uf, ...city];
+        const address = data.map((item: any) => ({ address: item.address }));
+        const number = data.map((item: any) => ({ number: item.number }));
+        this.filterData = [...service, ...uf, ...city, ...address, ...number];
 
         this.serviceFiltersBackup = this.filterData
           .filter(e => e.service != null)
@@ -152,6 +191,12 @@ export class MainSearchComponent implements OnInit {
           .filter(e => e.city != null)
           .filter((e, i, arr) => arr.findIndex(x => x.city === e.city) === i);
 
+        this.addressFiltersBackup = this.filterData
+          .filter(e => e.address != null)
+          .filter((e, i, arr) => arr.findIndex(x => x.address === e.address) === i);
+
+
+        this.originalAddressFilters = [...this.addressFiltersBackup];
         this.originalCityFilters = [...this.cityFiltersBackup];
       },
       error: (err) => {
@@ -215,7 +260,11 @@ export class MainSearchComponent implements OnInit {
     } else if (isUf === 'city') {
       this.toggleColumnCity = !this.toggleColumnCity;
       // Não mexe no cityFiltersBackup para não perder os dados
-    } else {
+    } else if (isUf === 'address'){
+      console.log('toggle address');
+      this.toggleColumnAddress = !this.toggleColumnAddress;
+      // Não mexe no addressFiltersBackup para não perder os dados
+    } else{
       this.toggleColumnService = !this.toggleColumnService;
       this.serviceFilters = this.toggleColumnService ? this.serviceFiltersBackup : [];
     }

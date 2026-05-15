@@ -24,7 +24,8 @@ export interface filters{
     city: string;
     cep: string;
     uf: string;
-    neighBorhood: string;
+    address: string;
+    number: string;
 }
 
 export interface filterRequest{
