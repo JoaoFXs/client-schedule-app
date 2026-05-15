@@ -42,7 +42,7 @@
       <div class="content-with-filter">
 
         <!-- Filtros -->
-        @if (toggle) {
+        @if (filtersState.showPanel) {
           <div class="table-filter">
 
             <!-- Tabela Serviços -->
@@ -53,7 +53,7 @@
                   Serviços
                 </th>
                 <td mat-cell *matCellDef="let element">
-                  @if (toggleColumnService) {
+                  @if (filtersState.showServiceColumn) {
                     <div class="cell-content">
                       <span>{{element.service}}</span>
                       <span class="selection-indicator">
@@ -83,7 +83,7 @@
                   Estados
                 </th>
                 <td mat-cell *matCellDef="let element">
-                  @if (toggleColumnUf) {
+                  @if (filtersState.showUfColumn) {
                     <div class="cell-content">
                       <span>{{element.uf}}</span>
                       <span class="selection-indicator">
@@ -106,7 +106,7 @@
             </table>
 
             <!-- Tabela Cidades (aparece apenas quando há UF selecionada) -->
-            @if (toggleCitys) {
+            @if (filtersState.showCityTable) {
               <table mat-table [dataSource]="cityFiltersBackup" class="table-section">
                 <ng-container matColumnDef="cidades">
                   <th mat-header-cell *matHeaderCellDef (click)="toggleColumn('city')">
@@ -114,7 +114,7 @@
                     Cidades
                   </th>
                   <td mat-cell *matCellDef="let element">
-                    @if (toggleColumnCity) {
+                    @if (filtersState.showCityColumn) {
                       <div class="cell-content">
                         <span>{{element.cityLabel || element.city}}</span>
                         <span class="selection-indicator">
@@ -133,13 +133,13 @@
                     *matRowDef="let row; columns: ['cidades'];"
                     (click)="selectedRow(row)"
                     [class.selected-row]="isRowSelected(row)"
-                    [style.display]="toggleColumnCity ? '' : 'none'">
+                    [style.display]="filtersState.showCityColumn ? '' : 'none'">
                 </tr>
               </table>
             }
 
             <!-- Tabela Endereços (aparece apenas quando há cidade selecionada) -->
-            @if (toggleAddress) {
+            @if (filtersState.showAddressTable) {
               <table mat-table [dataSource]="addressFiltersBackup" class="table-section">
                 <ng-container matColumnDef="enderecos">
                   <th mat-header-cell *matHeaderCellDef (click)="toggleColumn('address')">
@@ -147,7 +147,7 @@
                     Endereços
                   </th>
                   <td mat-cell *matCellDef="let element">
-                    @if (toggleColumnAddress) {
+                    @if (filtersState.showAddressColumn) {
                       <div class="cell-content">
                         <span>{{element.addressLabel || element.address}}</span>
                         <span class="selection-indicator">
@@ -166,11 +166,16 @@
                     *matRowDef="let row; columns: ['enderecos'];"
                     (click)="selectedRow(row)"
                     [class.selected-row]="isRowSelected(row)"
-                    [style.display]="toggleColumnAddress ? '' : 'none'">
+                    [style.display]="filtersState.showAddressColumn ? '' : 'none'">
                 </tr>
               </table>
             }
-
+            
+            <div class="clear-filters">
+                <button (click)="clearFilters()" alt ="Limpar Filtros">
+                  <mat-icon>filter_alt_off</mat-icon>
+                </button>
+              </div>
           </div>
         }
 

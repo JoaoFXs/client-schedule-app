@@ -18,13 +18,16 @@ export class MainSearchComponent implements OnInit {
   myControl = new FormControl();
   options = new Set<number>();
 
-  toggle: boolean = false;
-  toggleColumnUf: boolean = false;
-  toggleColumnService: boolean = false;
-  toggleColumnCity: boolean = false;
-  toggleCitys: boolean = false;
-  toggleAddress: boolean = false;
-  toggleColumnAddress: boolean = false;
+  filtersState = {
+    showPanel: false,
+    showUfColumn: false,
+    showServiceColumn: false,
+    showCityColumn: false,
+    showCityTable: false,
+    showAddressTable: false,
+    showAddressColumn: false,
+  };
+
 
   filteredOptions: Observable<string[]>;
   enterprises: any[] = [];
@@ -110,7 +113,7 @@ isRowSelected(row: filters): boolean {
       .filter(city => city != null);
 
     if (selectedUfs.length > 0) {
-      this.toggleCitys = true;
+      this.filtersState.showCityTable = true;
 
       const validCities = this.dataBackup
         .filter(e => selectedUfs.includes(e.uf))
@@ -129,14 +132,14 @@ isRowSelected(row: filters): boolean {
 
     } else {
       // Nenhuma UF selecionada: restaura tudo e fecha a coluna de cidades
-      this.toggleCitys = false;
-      this.toggleColumnCity = false;
+      this.filtersState.showCityTable = false;
+      this.filtersState.showCityColumn = false;
       this.cityFiltersBackup = [...this.originalCityFilters];
     }
 
 
     if (selectedCitys.length > 0) {
-      this.toggleAddress = true;
+      this.filtersState.showAddressTable = true;
 
       const validAddress = this.dataBackup
         .filter(e => selectedCitys.includes(e.city))
@@ -155,8 +158,8 @@ isRowSelected(row: filters): boolean {
 
     } else {
       // Nenhuma UF selecionada: restaura tudo e fecha a coluna de cidades
-      this.toggleAddress = false;
-      this.toggleColumnAddress = false;
+      this.filtersState.showAddressTable = false;
+      this.filtersState.showAddressColumn = false;
       this.addressFiltersBackup = [...this.originalAddressFilters];
     }
 
@@ -164,7 +167,7 @@ isRowSelected(row: filters): boolean {
   }
 
   toggleFilter() {
-    this.toggle = !this.toggle;
+    this.filtersState.showPanel = !this.filtersState.showPanel;
   }
 
   fillFilters() {
@@ -255,18 +258,33 @@ isRowSelected(row: filters): boolean {
 
   toggleColumn(isUf: string) {
     if (isUf === 'uf') {
-      this.toggleColumnUf = !this.toggleColumnUf;
-      this.ufFilters = this.toggleColumnUf ? this.ufFiltersBackup : [];
+      this.filtersState.showUfColumn = !this.filtersState.showUfColumn;
+      this.ufFilters = this.filtersState.showUfColumn ? this.ufFiltersBackup : [];
     } else if (isUf === 'city') {
-      this.toggleColumnCity = !this.toggleColumnCity;
+      this.filtersState.showCityColumn = !this.filtersState.showCityColumn;
       // Não mexe no cityFiltersBackup para não perder os dados
     } else if (isUf === 'address'){
       console.log('toggle address');
-      this.toggleColumnAddress = !this.toggleColumnAddress;
+      this.filtersState.showAddressColumn = !this.filtersState.showAddressColumn;
       // Não mexe no addressFiltersBackup para não perder os dados
     } else{
-      this.toggleColumnService = !this.toggleColumnService;
-      this.serviceFilters = this.toggleColumnService ? this.serviceFiltersBackup : [];
+      this.filtersState.showServiceColumn = !this.filtersState.showServiceColumn;
+      this.serviceFilters = this.filtersState.showServiceColumn ? this.serviceFiltersBackup : [];
     }
+  }
+
+  clearFilters() {
+    this.clickedRows.clear();
+    this.filtersState.showCityTable = false;
+    this.filtersState.showAddressTable = false;
+    this.filtersState.showCityColumn = false;
+    this.filtersState.showAddressColumn = false;
+    this.filtersState.showUfColumn = false;
+    this.filtersState.showServiceColumn = false;
+    this.cityFiltersBackup = [...this.originalCityFilters];
+    this.addressFiltersBackup = [...this.originalAddressFilters];
+    this.ufFilters = this.filtersState.showUfColumn ? this.ufFiltersBackup : [];
+    this.serviceFilters = this.filtersState.showServiceColumn ? this.serviceFiltersBackup : [];
+    this.fillEnterprises();
   }
 }

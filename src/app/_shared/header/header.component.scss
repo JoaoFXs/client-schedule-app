@@ -1,111 +1,339 @@
-/* Variáveis para facilitar manutenção */
 @use '@angular/material' as mat;
 
 :root {
-  --primary-bg: rgb(155, 192, 209);
-  --primary-text: rgb(3, 57, 82);
-  --hover-bg: rgba(255, 255, 255, 0.3); /* Branco transparente para hover */
-  
+  --toolbar-bg: #0f172a;
+  --toolbar-text: #94a3b8;
+  --toolbar-text-active: #f1f5f9;
+  --toolbar-hover: rgba(255, 255, 255, 0.08);
+  --toolbar-divider: rgba(255, 255, 255, 0.1);
+  --accent: #3b82f6;
+  --accent-bg: rgba(59, 130, 246, 0.15);
+  --accent-border: rgba(59, 130, 246, 0.5);
 }
 
-.toolbar {
-  /* Layout */
-  display: flex; /* Essencial para o .spacer funcionar */
-  align-items: center; /* Centraliza itens verticalmente */
-  gap: 8px; /* Espaço entre os ícones */
-  
-  /* Visual */
-  background-color: var(--primary-bg);
-  color: var(--primary-text);
-  padding: 0 16px; /* Mais respiro nas laterais */
-  height: 64px; /* Altura padrão de barras modernas */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave para dar profundidade */
+/* ===== TOOLBAR ===== */
+::ng-deep .toolbar.mat-toolbar {
+  background-color: var(--toolbar-bg) !important;
+  color: var(--toolbar-text) !important;
+  height: 64px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 .spacer {
   flex: 1 1 auto;
 }
 
-.icon {
-  /* Reset e Cores */
-  background-color: transparent; /* Fundo transparente fica mais elegante */
-  color: var(--primary-text);
-  border: none;
-  cursor: pointer;
-  
-  /* A Mágica: Transição Suave */
-  transition: all 0.2s ease-in-out;
+/* ===== LOGO ===== */
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
-.person-icon:hover,
-.share-icon:hover {
-  background-color: var(--hover-bg); /* Clareia o fundo ao passar o mouse */
-  transform: translateY(-2px); /* Leve subida (efeito flutuante) */
+.logo-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    color: #fff;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
 }
 
-.icon:active {
-  transform: scale(0.95); /* Efeito de clique (encolhe um pouco) */
+.logo-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--toolbar-text-active);
+  letter-spacing: -0.2px;
+  white-space: nowrap;
 }
 
-.drawer-container {
-  /* Remove o fundo cinza claro padrão do Angular Material para este container */
-  background-color: transparent;
+.logo-accent {
+  color: var(--accent);
 }
 
-.drawer-main-content {
-  /* Sobrescreve o overflow: auto padrão que causa a barra de rolagem */
-  overflow: visible !important;
+/* ===== DIVIDER ===== */
+.toolbar-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--toolbar-divider);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* ===== NAV ===== */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.nav-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+  color: var(--toolbar-text) !important;
+  font-size: 13px;
+  line-height: 1;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    color: var(--toolbar-text);
+  }
+
+  &:hover {
+    background: var(--toolbar-hover) !important;
+    color: var(--toolbar-text-active) !important;
+
+    mat-icon {
+      color: var(--toolbar-text-active);
+    }
+  }
+}
+
+/* ===== RIGHT ACTIONS ===== */
+.right-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.rel {
+  position: relative;
   display: flex;
   align-items: center;
 }
 
-.drawer-content{
-  height: 100px;
-  word-spacing: -5px;
+/* ===== ICON BUTTONS — sobrescreve Material corretamente ===== */
+.icon-btn {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 8px !important;
+  color: var(--toolbar-text) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // Fundo base via ripple layer
+  ::ng-deep .mat-mdc-button-persistent-ripple {
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.06);
+    opacity: 1;
+  }
+
+  // Remove o ripple padrão de hover do Material
+  ::ng-deep .mat-mdc-button-ripple {
+    display: none;
+  }
+
+  &:hover {
+    color: var(--toolbar-text-active) !important;
+
+    ::ng-deep .mat-mdc-button-persistent-ripple {
+      background-color: rgba(255, 255, 255, 0.14);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+  }
 }
 
-.drawer-content .username{
-  margin: 0;          /* Remove o espaço externo */
-  margin-top: 5px;
-  padding: 0;
+.notif-badge {
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  border: 2px solid var(--toolbar-bg);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== AVATAR ===== */
+.avatar-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1.5px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(59, 130, 246, 0.28);
+    border-color: var(--accent);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.avatar-btn--guest {
+  border-color: var(--toolbar-divider);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--toolbar-text);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--toolbar-text-active);
+  }
+}
+
+/* ===== DRAWER — não pode quebrar o layout da toolbar ===== */
+
+.drawer-container {
+  background: transparent !important;
+  height: 36px;
+  overflow: visible !important;
+  position: relative;
+}
+
+.drawer-main-content {
+  overflow: visible !important;
+  background: transparent !important;
+  display: flex;
+  align-items: center;
+  height: 36px;
+  // Impede que o Material empurre o conteúdo ao abrir
+  margin-left: 0 !important;
+  transform: none !important;
+  transition: none !important;
+}
+::ng-deep .drawer-content.mat-drawer {
+  position: fixed !important;
+  top: 64px !important;
+  right: 16px !important;
+  left: auto !important;
+  width: 220px !important;
+  height: 200px !important;
+  min-height: unset !important;
+  transform: none !important;
+  visibility: visible !important;
+
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  padding: 16px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.drawer-content .username {
+  margin: 0;
   font-size: 14px;
-  line-height: 1.2;   /* Define a altura da linha bem justa */
-  display: block;     /* Garante que quebre a linha */
+  font-weight: 500;
+  color: #111827;
+  line-height: 1.3;
 }
 
-.drawer-content .email{
-  margin: 0;          /* Remove o espaço externo */
-  padding: 0;
-  font-size: 12px;    /* Email geralmente é menor */
-  color: #ccc;        /* Cor mais clara para dar hierarquia (opcional) */
-  line-height: 1.2;   /* Define a altura da linha bem justa */
-  display: block;
+.drawer-content .email {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #6b7280;
+  word-break: break-all;
+  line-height: 1.3;
 }
 
-/* Nova classe para o botão de Logout */
 .logout-btn {
-  position: absolute; /* Remove o botão do fluxo do texto */
-  right: 5px;        /* Cola ele na direita */        /* Coloca no meio da altura */
-  transform: translateY(-90%); /* Garante o centro exato vertical */
+  position: static !important;
+  transform: none !important;
+  margin-top: 8px;
+  padding-top: 8px !important;
+  border-top: 1px solid #f3f4f6;
+  width: 100%;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px;
+  color: #ef4444 !important;
+  border-radius: 8px !important;
 
+  mat-icon {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+    color: #ef4444;
+  }
+  ::ng-deep .mat-mdc-button-persistent-ripple {
+    display: none !important;
+  }
+
+  ::ng-deep .mat-mdc-button-ripple {
+    display: none !important;
+  }
+
+  ::ng-deep .mat-ripple {
+    display: none !important;
+  }
+  &:hover {
+    background: #fef2f2 !important;
+  }
+}
+::ng-deep .drawer-content.mat-drawer:not(.mat-drawer-opened) {
+  display: none !important;
+}
+/* ===== MENU ===== */
+.button-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
 }
 
-.logout-btn:hover {
-  background-color: var(--hover-bg); /* Clareia o fundo ao passar o mouse */
-  transform: translateY(-95%); /* Leve subida (efeito flutuante) */
-}
+/* ===== ANIMAÇÃO ===== */
 .cell-content {
   animation: slideDown 200ms ease-out;
 }
 
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
