@@ -28,6 +28,7 @@ export class MainSearchService {
       size: size,
       service: Array.from(selectedFilters).map(filter => filter.service).join(','), // Converte o Set de filtros em uma string separada por vírgulas,
       uf: Array.from(selectedFilters).map(filter => filter.uf).join(','),
+      city: Array.from(selectedFilters).map(filter => filter.city).join(','),
       name: myControl // Adiciona o valor do campo de controle ao objeto de parâmetros
     };
 

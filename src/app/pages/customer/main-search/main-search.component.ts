@@ -7,12 +7,12 @@ import { content, enterprise, filterRequest, filters, Service, UF } from '../int
 import { PaginationUtils } from '../../../_shared/utils/pagination-utils';
 import { Address } from '../../../_shared/interface/address.model';
 import { LocationService } from '../../../_shared/services/location/location.service';
+
 @Component({
   selector: 'app-main-search',
   standalone: false,
   templateUrl: './main-search.component.html',
   styleUrl: './main-search.component.scss',
-  
 })
 export class MainSearchComponent implements OnInit {
   myControl = new FormControl();
@@ -21,19 +21,28 @@ export class MainSearchComponent implements OnInit {
   toggle: boolean = false;
   toggleColumnUf: boolean = false;
   toggleColumnService: boolean = false;
+  toggleColumnCity: boolean = false;
+  toggleCitys: boolean = false;
+
   filteredOptions: Observable<string[]>;
-  enterprises: any[] = []; // Aqui você pode definir a estrutura do seu array de empresas
+  enterprises: any[] = [];
   enterprisesContent: any[] = [];
-  displayedColumns: string[] = ['service','enderecos'];
+  displayedColumns: string[] = ['service', 'enderecos', 'cidades'];
+
   serviceFilters: filters[] = [];
   ufFilters: filters[] = [];
   ufFiltersBackup: filters[] = [];
   serviceFiltersBackup: filters[] = [];
+  cityFiltersBackup: any[] = [];       // any[] para suportar cityLabel
+  originalCityFilters: filters[] = [];
+  dataBackup: filters[] = [];
   filterData: any[] = [];
+
   clickedRows = new Set<filters>();
   address?: Address;
   loading = false;
   error?: string;
+
   constructor(
     private mainSearchService: MainSearchService,
     public paginationUtils: PaginationUtils,
@@ -50,58 +59,87 @@ export class MainSearchComponent implements OnInit {
     this.fillEnterprises();
   }
 
-  /**
-   * A função _filter() é responsável por filtrar a lista de empresas com base no valor de entrada fornecido pelo usuário. Ela converte o valor de entrada para minúsculas e, em seguida, filtra a lista de empresas, retornando apenas aquelas cujo serviço inclui o valor de entrada (também convertido para minúsculas). O resultado é uma lista de empresas que correspondem ao critério de pesquisa do usuário.
-   */
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.enterprises.filter(enterprise => enterprise.service.toLowerCase().includes(filterValue));
   }
 
   /**
-   * A função selectedRow() é responsável por gerenciar a seleção de linhas na interface do usuário. Ela recebe um objeto do tipo 'filters' como parâmetro, que representa a linha selecionada. A função verifica se a linha já está presente no conjunto 'clickedRows'. Se estiver, ela remove a linha do conjunto; caso contrário, adiciona a linha ao conjunto. Isso permite que o usuário selecione ou desmarque linhas, e o estado das linhas selecionadas é mantido no conjunto 'clickedRows'.
+   * Verifica se uma linha está selecionada por comparação de valor,
+   * evitando o problema de referência do Set.has().
+   */
+  isRowSelected(row: filters): boolean {
+    return [...this.clickedRows].some(
+      r => r.city === row.city && r.uf === row.uf && r.service === row.service
+    );
+  }
+
+  /**
+   * Gerencia a seleção/deseleção de linhas e atualiza os filtros de cidade
+   * com base nas UFs selecionadas.
    */
   selectedRow(row: filters) {
-    console.log('Linha selecionada:', row);
+    // Toggle por comparação de valor
+    const exists = this.isRowSelected(row);
 
-    this.clickedRows.has(row) ? this.clickedRows.delete(row) : this.clickedRows.add(row);
- 
-    console.log('Linhas selecionadas:', this.clickedRows);
+    if (exists) {
+      this.clickedRows = new Set(
+        [...this.clickedRows].filter(
+          r => !(r.city === row.city && r.uf === row.uf && r.service === row.service)
+        )
+      );
+    } else {
+      this.clickedRows.add(row);
+    }
+
+    // Filtra cidades com base em TODAS as UFs selecionadas
+    const selectedUfs = [...this.clickedRows]
+      .map(r => r.uf)
+      .filter(uf => uf != null);
+
+    if (selectedUfs.length > 0) {
+      this.toggleCitys = true;
+
+      const validCities = this.dataBackup
+        .filter(e => selectedUfs.includes(e.uf))
+        .map(e => e.city);
+
+      // Mantém city original intacto; adiciona cityLabel apenas para exibição
+      this.cityFiltersBackup = this.originalCityFilters
+        .filter(e => validCities.includes(e.city))
+        .map(e => {
+          const uf = this.dataBackup.find(d => d.city === e.city)?.uf;
+          return {
+            ...e,
+            cityLabel: `${e.city} - ${uf}`
+          };
+        });
+
+    } else {
+      // Nenhuma UF selecionada: restaura tudo e fecha a coluna de cidades
+      this.toggleCitys = false;
+      this.toggleColumnCity = false;
+      this.cityFiltersBackup = [...this.originalCityFilters];
+    }
+
     this.fillEnterprises();
   }
 
-  /**
-   * A função toggleFilter() é responsável por alternar a visibilidade dos filtros na interface do usuário. Ela inverte o valor booleano da variável 'toggle', que pode ser usada para mostrar ou esconder os filtros no template HTML.
-   */
-  toggleFilter(){
+  toggleFilter() {
     this.toggle = !this.toggle;
   }
 
-
-  /**
-   * Preenche a lista de filtros e empresas, além de configurar a paginação com base no total de empresas retornado pelo backend.
-   * A função fillFilters() busca os serviços disponíveis e os armazena em ELEMENT_DATA, que é usado para exibir os filtros.
-   */
-  fillFilters(){
-   this.mainSearchService.getAllServices().subscribe({
+  fillFilters() {
+    this.mainSearchService.getAllServices().subscribe({
       next: (data: any) => {
-        let uf = data.map(
-          (item: any) => {
-            return {
-              uf: item.uf
-            } 
-          }
-        )
-        let service = data.map(
-          (item: any) => {
-            return {
-              service: item.service
-            } 
-          }
-        )
-        console.log('Dados recebidos do servidor:', service);
-        this.filterData = [...service, ...uf];
-        // Deduplica cada coluna separadamente
+        this.dataBackup = data;
+
+        const uf = data.map((item: any) => ({ uf: item.uf }));
+        const service = data.map((item: any) => ({ service: item.service }));
+        const city = data.map((item: any) => ({ city: item.city }));
+
+        this.filterData = [...service, ...uf, ...city];
+
         this.serviceFiltersBackup = this.filterData
           .filter(e => e.service != null)
           .filter((e, i, arr) => arr.findIndex(x => x.service === e.service) === i);
@@ -110,7 +148,11 @@ export class MainSearchComponent implements OnInit {
           .filter(e => e.uf != null)
           .filter((e, i, arr) => arr.findIndex(x => x.uf === e.uf) === i);
 
-        console.log('Lista de filtros carregada:', this.filterData);
+        this.cityFiltersBackup = this.filterData
+          .filter(e => e.city != null)
+          .filter((e, i, arr) => arr.findIndex(x => x.city === e.city) === i);
+
+        this.originalCityFilters = [...this.cityFiltersBackup];
       },
       error: (err) => {
         console.error('Erro ao buscar dados do servidor:', err);
@@ -118,22 +160,18 @@ export class MainSearchComponent implements OnInit {
     });
   }
 
-  /**
-   *  A função fillEnterprises() busca as empresas com base na página atual e tamanho da página, atualiza a lista de empresas exibidas e configura a paginação.
-   */
-  fillEnterprises(){
-    console.log('Buscando empresas com os seguintes parâmetros: ');
-    console.log('Índice da página:', this.paginationUtils.pageIndex);
-    console.log('Tamanho da página:', this.paginationUtils.pageSize);
-    console.log('Filtros selecionados:', this.clickedRows);
-    console.log('Valor do campo de controle:', this.myControl.value);
-    this.mainSearchService.getAllEnterprises(this.paginationUtils.pageIndex, this.paginationUtils.pageSize, this.clickedRows, this.myControl.value).subscribe({
+  fillEnterprises() {
+    this.mainSearchService.getAllEnterprises(
+      this.paginationUtils.pageIndex,
+      this.paginationUtils.pageSize,
+      this.clickedRows,
+      this.myControl.value
+    ).subscribe({
       next: (data: any) => {
         this.enterprisesContent = data.content as enterprise[];
         this.paginationUtils.length = data.totalElements;
         this.paginationUtils.pageSize = data.size;
         this.paginationUtils.setPageSizeOptions(this.paginationUtils.length);
-        console.log('Lista de empresas carregada:', this.enterprisesContent);
       },
       error: (err) => {
         console.error('Erro ao buscar dados do servidor:', err);
@@ -141,25 +179,18 @@ export class MainSearchComponent implements OnInit {
     });
   }
 
-  /**
-   * O método handlePageEvent() é chamado quando o usuário interage com a paginação, atualizando os parâmetros de página e recarregando as empresas.
-   * @param event 
-   */
   handlePageEvent(event: any) {
     this.paginationUtils.pageIndex = event.pageIndex;
     this.paginationUtils.pageSize = event.pageSize;
-
-    // Chamamos o backend novamente com os novos parâmetros
     this.fillEnterprises();
   }
-  
-   getAddress() {
+
+  getAddress() {
     this.loading = true;
     this.error = undefined;
     this.locationService.getCurrentAddress().subscribe({
       next: addr => {
         this.address = addr;
-        console.log('Endereço obtido:', this.address);
         this.loading = false;
       },
       error: err => {
@@ -169,24 +200,24 @@ export class MainSearchComponent implements OnInit {
     });
   }
 
- 
-
-    onPermission(permitted: boolean) {
-      if (permitted) {
-        this.getAddress();
-      } else {
-        this.error = 'Permissão negada para acessar a localização.';
-      }
+  onPermission(permitted: boolean) {
+    if (permitted) {
+      this.getAddress();
+    } else {
+      this.error = 'Permissão negada para acessar a localização.';
     }
+  }
 
-    toggleColumn(isUf: boolean = false) {
-      if (isUf) {
-        this.toggleColumnUf = !this.toggleColumnUf;
-        this.ufFilters = this.toggleColumnUf ? this.ufFiltersBackup : [];
-      } else {
-        this.toggleColumnService = !this.toggleColumnService;
-        this.serviceFilters = this.toggleColumnService ? this.serviceFiltersBackup : [];
-      }
+  toggleColumn(isUf: string) {
+    if (isUf === 'uf') {
+      this.toggleColumnUf = !this.toggleColumnUf;
+      this.ufFilters = this.toggleColumnUf ? this.ufFiltersBackup : [];
+    } else if (isUf === 'city') {
+      this.toggleColumnCity = !this.toggleColumnCity;
+      // Não mexe no cityFiltersBackup para não perder os dados
+    } else {
+      this.toggleColumnService = !this.toggleColumnService;
+      this.serviceFilters = this.toggleColumnService ? this.serviceFiltersBackup : [];
     }
-
+  }
 }

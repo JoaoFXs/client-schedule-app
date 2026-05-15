@@ -48,7 +48,7 @@
             <!-- Tabela Serviços -->
             <table mat-table [dataSource]="serviceFilters" class="table-section">
               <ng-container matColumnDef="service">
-                <th mat-header-cell *matHeaderCellDef (click)="toggleColumn(false)">
+                <th mat-header-cell *matHeaderCellDef (click)="toggleColumn('service')">
                   <mat-icon class="icon-service">storefront</mat-icon>
                   Serviços
                 </th>
@@ -57,7 +57,7 @@
                     <div class="cell-content">
                       <span>{{element.service}}</span>
                       <span class="selection-indicator">
-                        @if (clickedRows.has(element)) {
+                        @if (isRowSelected(element)) {
                           <mat-icon color="primary">check_circle</mat-icon>
                         } @else {
                           <mat-icon class="icon-placeholder">radio_button_unchecked</mat-icon>
@@ -71,14 +71,14 @@
               <tr mat-row
                   *matRowDef="let row; columns: ['service'];"
                   (click)="selectedRow(row)"
-                  [class.selected-row]="clickedRows.has(row)">
+                  [class.selected-row]="isRowSelected(row)">
               </tr>
             </table>
 
             <!-- Tabela Endereços -->
             <table mat-table [dataSource]="ufFilters" class="table-section">
               <ng-container matColumnDef="enderecos">
-                <th mat-header-cell *matHeaderCellDef (click)="toggleColumn(true)">
+                <th mat-header-cell *matHeaderCellDef (click)="toggleColumn('uf')">
                   <mat-icon class="icon-service">map</mat-icon>
                   Endereços
                 </th>
@@ -87,7 +87,7 @@
                     <div class="cell-content">
                       <span>{{element.uf}}</span>
                       <span class="selection-indicator">
-                        @if (clickedRows.has(element)) {
+                        @if (isRowSelected(element)) {
                           <mat-icon color="primary">check_circle</mat-icon>
                         } @else {
                           <mat-icon class="icon-placeholder">radio_button_unchecked</mat-icon>
@@ -101,9 +101,42 @@
               <tr mat-row
                   *matRowDef="let row; columns: ['enderecos'];"
                   (click)="selectedRow(row)"
-                  [class.selected-row]="clickedRows.has(row)">
+                  [class.selected-row]="isRowSelected(row)">
               </tr>
             </table>
+
+            <!-- Tabela Cidades (aparece apenas quando há UF selecionada) -->
+            @if (toggleCitys) {
+              <table mat-table [dataSource]="cityFiltersBackup" class="table-section">
+                <ng-container matColumnDef="cidades">
+                  <th mat-header-cell *matHeaderCellDef (click)="toggleColumn('city')">
+                    <mat-icon class="icon-service">map</mat-icon>
+                    Cidades
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    @if (toggleColumnCity) {
+                      <div class="cell-content">
+                        <span>{{element.cityLabel || element.city}}</span>
+                        <span class="selection-indicator">
+                          @if (isRowSelected(element)) {
+                            <mat-icon color="primary">check_circle</mat-icon>
+                          } @else {
+                            <mat-icon class="icon-placeholder">radio_button_unchecked</mat-icon>
+                          }
+                        </span>
+                      </div>
+                    }
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="['cidades']"></tr>
+                <tr mat-row
+                    *matRowDef="let row; columns: ['cidades'];"
+                    (click)="selectedRow(row)"
+                    [class.selected-row]="isRowSelected(row)"
+                    [style.display]="toggleColumnCity ? '' : 'none'">
+                </tr>
+              </table>
+            }
 
           </div>
         }
