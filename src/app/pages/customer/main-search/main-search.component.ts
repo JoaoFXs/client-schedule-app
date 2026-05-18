@@ -30,6 +30,10 @@ export class MainSearchComponent implements OnInit, OnDestroy {
     showAddressColumn: false,
   };
 
+  private updateFiltersState(partial: Partial<typeof this.filtersState>): void {
+     this.filtersState = { ...this.filtersState, ...partial };
+  }
+
 
   filteredOptions: Observable<string[]>;
   enterprises: enterprise[] = [];
@@ -134,7 +138,7 @@ isRowSelected(row: filters): boolean {
   // dados originais intactos para futuras seleções.
   updateCityFiltersWithUF(selectedUfs: string[]) {
      if (selectedUfs.length > 0) {
-      this.filtersState.showCityTable = true;
+      this.updateFiltersState({ showCityTable: true });
       const validCities = this.dataBackup
         .filter(e => selectedUfs.includes(e.uf))
         .map(e => e.city);
@@ -152,8 +156,8 @@ isRowSelected(row: filters): boolean {
 
     } else {
       // Nenhuma UF selecionada: restaura tudo e fecha a coluna de cidades
-      this.filtersState.showCityTable = false;
-      this.filtersState.showCityColumn = false;
+      this.updateFiltersState({ showCityTable: false, 
+                                showCityColumn: false });
       this.cityFiltersBackup = [...this.originalCityFilters];
     }
   }
@@ -173,7 +177,7 @@ isRowSelected(row: filters): boolean {
   // dados originais intactos para futuras seleções.
   updateAddressFiltersWithCity(selectedCities: string[]) {
      if (selectedCities.length > 0) {
-      this.filtersState.showAddressTable = true;
+      this.updateFiltersState({ showAddressTable: true });
       const validAddress = this.dataBackup
         .filter(e => selectedCities.includes(e.city))
         .map(e => e.address);
@@ -189,14 +193,14 @@ isRowSelected(row: filters): boolean {
               });
     } else {
       // Nenhuma UF selecionada: restaura tudo e fecha a coluna de cidades
-      this.filtersState.showAddressTable = false;
-      this.filtersState.showAddressColumn = false;
+      this.updateFiltersState({ showAddressTable: false, 
+                                showAddressColumn: false });
       this.addressFiltersBackup = [...this.originalAddressFilters];
     }
   }
 
   toggleFilter() {
-    this.filtersState.showPanel = !this.filtersState.showPanel;
+    this.updateFiltersState({ showPanel: !this.filtersState.showPanel });
   }
 
   fillFilters() {
@@ -291,29 +295,30 @@ isRowSelected(row: filters): boolean {
 
   toggleColumn(isUf: string) {
     if (isUf === 'uf') {
-      this.filtersState.showUfColumn = !this.filtersState.showUfColumn;
+      this.updateFiltersState({ showUfColumn: !this.filtersState.showUfColumn });
       this.ufFilters = this.filtersState.showUfColumn ? this.ufFiltersBackup : [];
     } else if (isUf === 'city') {
-      this.filtersState.showCityColumn = !this.filtersState.showCityColumn;
+      this.updateFiltersState({ showCityColumn: !this.filtersState.showCityColumn });
       // Não mexe no cityFiltersBackup para não perder os dados
     } else if (isUf === 'address'){
       console.log('toggle address');
-      this.filtersState.showAddressColumn = !this.filtersState.showAddressColumn;
+      this.updateFiltersState({ showAddressColumn: !this.filtersState.showAddressColumn });
       // Não mexe no addressFiltersBackup para não perder os dados
     } else{
-      this.filtersState.showServiceColumn = !this.filtersState.showServiceColumn;
+      this.updateFiltersState({ showServiceColumn: !this.filtersState.showServiceColumn });
       this.serviceFilters = this.filtersState.showServiceColumn ? this.serviceFiltersBackup : [];
     }
   }
 
   clearFilters() {
     this.clickedRows.clear();
-    this.filtersState.showCityTable = false;
-    this.filtersState.showAddressTable = false;
-    this.filtersState.showCityColumn = false;
-    this.filtersState.showAddressColumn = false;
-    this.filtersState.showUfColumn = false;
-    this.filtersState.showServiceColumn = false;
+    this.updateFiltersState({ showCityTable: false,
+                              showAddressTable: false,
+                              showCityColumn: false,
+                              showAddressColumn: false,
+                              showUfColumn: false,
+                              showServiceColumn: false 
+    });
     this.cityFiltersBackup = [...this.originalCityFilters];
     this.addressFiltersBackup = [...this.originalAddressFilters];
     this.ufFilters = this.filtersState.showUfColumn ? this.ufFiltersBackup : [];
