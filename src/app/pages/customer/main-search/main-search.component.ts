@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { map, Observable, startWith } from 'rxjs';
+import { map, Observable, startWith, Subject, takeUntil } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { OnInit } from '@angular/core';
+import { OnInit, OnDestroy } from '@angular/core';
 import { MainSearchService } from '../services/main-search.service';
 import { content, enterprise, filterRequest, filters, Service, UF } from '../interfaces/enterprise.model';
 import { PaginationUtils } from '../../../_shared/utils/pagination-utils';
@@ -14,9 +14,11 @@ import { LocationService } from '../../../_shared/services/location/location.ser
   templateUrl: './main-search.component.html',
   styleUrl: './main-search.component.scss',
 })
-export class MainSearchComponent implements OnInit {
+export class MainSearchComponent implements OnInit, OnDestroy {
   myControl = new FormControl();
   options = new Set<number>();
+  //Subject para emitir um valor de "destruição" para cancelar assinaturas.
+  private destroy$ = new Subject<void>();
 
   filtersState = {
     showPanel: false,
@@ -66,7 +68,12 @@ export class MainSearchComponent implements OnInit {
     this.fillFilters();
     this.fillEnterprises();
   }
-
+  // Limpa as assinaturas para evitar memory leaks
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.enterprises.filter(enterprise => enterprise.service.toLowerCase().includes(filterValue));
@@ -171,7 +178,9 @@ isRowSelected(row: filters): boolean {
   }
 
   fillFilters() {
-    this.mainSearchService.getAllServices().subscribe({
+    this.mainSearchService.getAllServices()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
       next: (data: any) => {
         this.dataBackup = data;
 
@@ -214,7 +223,9 @@ isRowSelected(row: filters): boolean {
       this.paginationUtils.pageSize,
       this.clickedRows,
       this.myControl.value
-    ).subscribe({
+    )
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
       next: (data: any) => {
         this.enterprisesContent = data.content as enterprise[];
         this.paginationUtils.length = data.totalElements;
@@ -287,4 +298,7 @@ isRowSelected(row: filters): boolean {
     this.serviceFilters = this.filtersState.showServiceColumn ? this.serviceFiltersBackup : [];
     this.fillEnterprises();
   }
+
+
+
 }
