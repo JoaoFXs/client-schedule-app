@@ -32,8 +32,8 @@ export class MainSearchComponent implements OnInit, OnDestroy {
 
 
   filteredOptions: Observable<string[]>;
-  enterprises: any[] = [];
-  enterprisesContent: any[] = [];
+  enterprises: enterprise[] = [];
+  enterprisesContent: enterprise[] = [];
   displayedColumns: string[] = ['service', 'enderecos', 'cidades', 'estados'];
 
   serviceFilters: filters[] = [];
@@ -41,12 +41,14 @@ export class MainSearchComponent implements OnInit, OnDestroy {
   ufFiltersBackup: filters[] = [];
   serviceFiltersBackup: filters[] = [];
   addressFiltersBackup: filters[] = [];
-  cityFiltersBackup: any[] = [];       // any[] para suportar cityLabel
+  cityFiltersBackup: filters[] = [];
+
+  cityFilters: filters[] = [];  
   originalCityFilters: filters[] = [];
   originalAddressFilters: filters[] = [];
 
   dataBackup: filters[] = [];
-  filterData: any[] = [];
+  filterData: filters[] = [];
 
   clickedRows = new Set<filters>();
   address?: Address;
@@ -73,10 +75,12 @@ export class MainSearchComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
-  
+
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.enterprises.filter(enterprise => enterprise.service.toLowerCase().includes(filterValue));
+    return this.enterprises
+      .filter(enterprise => enterprise.service.toLowerCase().includes(filterValue))
+      .map(enterprise => enterprise.service);
   }
 
   /**
