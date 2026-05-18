@@ -89,10 +89,7 @@ export class MainSearchComponent implements OnInit, OnDestroy {
    */
 isRowSelected(row: filters): boolean {
   return [...this.clickedRows].some(
-    r => r.city === row.city 
-      && r.uf === row.uf 
-      && r.service === row.service 
-      && r.address === row.address  // <-- ADICIONAR
+    r => this.isSameRow(r, row)
   );
 }
 
@@ -114,7 +111,7 @@ isRowSelected(row: filters): boolean {
       if (this.isRowSelected(row)) {
       this.clickedRows = new Set(
         [...this.clickedRows].filter(
-          r => !(r.city === row.city && r.uf === row.uf && r.service === row.service && r.address === row.address)
+          r => !(this.isSameRow(r, row))
         )
       );
     } else {
@@ -166,6 +163,8 @@ isRowSelected(row: filters): boolean {
     let selectedCities = [...clickedRows]
       .map(r => r.city)
       .filter(city => city != null);
+
+    this.updateAddressFiltersWithCity(selectedCities);
 
   }
 
@@ -322,6 +321,12 @@ isRowSelected(row: filters): boolean {
     this.fillEnterprises();
   }
 
-
+  // Compara duas linhas de filtros para determinar se são iguais, considerando os campos relevantes para a seleção.
+  private isSameRow(row1: filters, row2: filters): boolean {
+    return row1.city === row2.city 
+      && row1.uf === row2.uf 
+      && row1.service === row2.service 
+      && row1.address === row2.address; 
+  }
 
 }
