@@ -101,10 +101,17 @@ isRowSelected(row: filters): boolean {
    * com base nas UFs selecionadas.
    */
   selectedRow(row: filters) {
-    // Toggle por comparação de valor
-    const exists = this.isRowSelected(row);
+    this.verifyRowSelection(row);
+    // Atualiza os filtros de cidade e endereço com base nas linhas clicadas
+    this.fillUF(this.clickedRows);
+    // Atualiza os filtros de endereço com base nas cidades selecionadas
+    this.fillAddress(this.clickedRows);
+    this.fillEnterprises();
+  }
 
-    if (exists) {
+  // Gerencia a adição ou remoção de uma linha selecionada, comparando os valores para evitar problemas de referência.
+  verifyRowSelection(row: filters) {
+      if (this.isRowSelected(row)) {
       this.clickedRows = new Set(
         [...this.clickedRows].filter(
           r => !(r.city === row.city && r.uf === row.uf && r.service === row.service && r.address === row.address)
@@ -113,19 +120,24 @@ isRowSelected(row: filters): boolean {
     } else {
       this.clickedRows.add(row);
     }
+  }
 
-    // Filtra cidades com base em TODAS as UFs selecionadas
-    const selectedUfs = [...this.clickedRows]
+  // Preenche as UFs selecionadas a partir das linhas clicadas, garantindo que apenas UFs únicas e não nulas sejam retornadas.
+  fillUF(clickedRows: Set<filters>) {
+    let selectedUfs = [...clickedRows]
       .map(r => r.uf)
-      .filter(uf => uf != null);
+      .filter(uf => uf != null);    
+    this.updateCityFiltersWithUF(selectedUfs);
 
-    const selectedCitys = [...this.clickedRows]
-      .map(r => r.city)
-      .filter(city => city != null);
+  }
 
-    if (selectedUfs.length > 0) {
+
+  // Atualiza os filtros de cidade com base nas UFs selecionadas,
+  //  garantindo que apenas cidades válidas sejam exibidas e mantendo os 
+  // dados originais intactos para futuras seleções.
+  updateCityFiltersWithUF(selectedUfs: string[]) {
+     if (selectedUfs.length > 0) {
       this.filtersState.showCityTable = true;
-
       const validCities = this.dataBackup
         .filter(e => selectedUfs.includes(e.uf))
         .map(e => e.city);
@@ -147,15 +159,25 @@ isRowSelected(row: filters): boolean {
       this.filtersState.showCityColumn = false;
       this.cityFiltersBackup = [...this.originalCityFilters];
     }
+  }
 
+  // Preenche os endereços selecionados a partir das linhas clicadas, garantindo que apenas endereços únicos e não nulos sejam retornados.
+  fillAddress(clickedRows: Set<filters>) {
+    let selectedCities = [...clickedRows]
+      .map(r => r.city)
+      .filter(city => city != null);
 
-    if (selectedCitys.length > 0) {
+  }
+
+  // Atualiza os filtros de endereço com base nas cidades selecionadas,
+  // garantindo que apenas endereços válidos sejam exibidos e mantendo os 
+  // dados originais intactos para futuras seleções.
+  updateAddressFiltersWithCity(selectedCities: string[]) {
+     if (selectedCities.length > 0) {
       this.filtersState.showAddressTable = true;
-
       const validAddress = this.dataBackup
-        .filter(e => selectedCitys.includes(e.city))
+        .filter(e => selectedCities.includes(e.city))
         .map(e => e.address);
-
       // Mantém address original intacto; adiciona addressLabel apenas para exibição
      this.addressFiltersBackup = this.originalAddressFilters
               .filter(e => validAddress.includes(e.address))
@@ -166,15 +188,12 @@ isRowSelected(row: filters): boolean {
                   addressLabel: `${e.address}, ${found?.number} - ${found?.city} - ${found?.uf}` // usa found para tudo
                 };
               });
-
     } else {
       // Nenhuma UF selecionada: restaura tudo e fecha a coluna de cidades
       this.filtersState.showAddressTable = false;
       this.filtersState.showAddressColumn = false;
       this.addressFiltersBackup = [...this.originalAddressFilters];
     }
-
-    this.fillEnterprises();
   }
 
   toggleFilter() {
