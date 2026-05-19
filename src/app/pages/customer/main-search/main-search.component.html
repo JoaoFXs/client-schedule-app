@@ -1,7 +1,6 @@
-<app-permission-location
-  #prompt
-  (permitted)="onPermission($event)"
-/>
+<!-- o pai só abre via #prompt.open(), sem bindings -->
+<app-permission-location #prompt />
+
 
 <div class="main-container">
   <div class="custom-card">

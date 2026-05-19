@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { map, Observable, startWith, Subject, takeUntil } from 'rxjs';
 
@@ -90,7 +90,7 @@ export class MainSearchComponent implements OnInit, OnDestroy {
   };
 
   address?: Address;
-  loading = false;
+  @Input() loading = false;
   error?  : string;
 
   // ── Utilitários privados ───────────────────────────────────────────────────
@@ -309,31 +309,5 @@ export class MainSearchComponent implements OnInit, OnDestroy {
     this.ufFilters      = this.filtersState.showUfColumn      ? this.ufFiltersBackup      : [];
     this.serviceFilters = this.filtersState.showServiceColumn ? this.serviceFiltersBackup : [];
     this.fillEnterprises();
-  }
-
-  // ── Geolocalização ─────────────────────────────────────────────────────────
-
-  getAddress(): void {
-    this.loading = true;
-    this.error   = undefined;
-
-    this.locationService.getCurrentAddress().subscribe({
-      next: addr => {
-        this.address = addr;
-        this.loading = false;
-      },
-      error: err => {
-        this.error   = `Erro: ${err}`;
-        this.loading = false;
-      },
-    });
-  }
-
-  onPermission(permitted: boolean): void {
-    if (permitted) {
-      this.getAddress();
-    } else {
-      this.error = 'Permissão negada para acessar a localização.';
-    }
   }
 }
