@@ -6,6 +6,10 @@
   min-height: 100vh;
   background-color: #f4f7f9;
   padding: 20px;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
 }
 
 .custom-card {
@@ -17,31 +21,51 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   width: 100%;
   max-width: 1200px;
-  position: relative; /* Referência para a tabela */
+  position: relative;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
 }
 
 .card-content-layout {
   width: 100%;
 }
 
+/* ===== HEADER + SEARCH ===== */
 .header-search {
   display: flex;
   align-items: center;
   gap: 15px;
   width: 100%;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 }
 
 .search-section {
   flex: 1;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    flex: unset;
+  }
+}
+
+.full-width {
+  width: 100%;
 }
 
 .header-search .header-content:first-child {
   flex-grow: 1;
   align-items: center;
-}
 
-.full-width {
-  width: 100%;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .header-search .header-content .filter-icon {
@@ -64,24 +88,75 @@
   transform: translateY(-1px);
 }
 
-/* ===== TABELA FLUTUANTE - ALINHADA NO TOPO ===== */
+/* ===== TABELA FLUTUANTE ===== */
 .table-filter {
   position: absolute;
-  top: 0; /* Alinha exatamente no topo do card */
-  right: -320px; /* Fica à direita do card com espaçamento */
+  top: 0;
+  right: -320px;
   width: 300px;
   z-index: 100;
+
+  @media (max-width: 1600px) {
+    position: static;
+    width: 100%;
+    right: auto;
+    margin-top: 16px;
+  }
 }
 
-/* Remove qualquer transform dos filhos que possa interferir */
 .table-filter * {
   transform: none !important;
 }
 
 .table-filter table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 10px;
+  border-collapse: collapse;
+
+  @media (max-width: 768px) {
+    border-spacing: 0 6px;
+  }
+}
+
+.table-filter th {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  font-weight: 500;
+  font-size: 14px;
+  border-bottom: 1px 0px 1px 0px solid #606060;
+}
+
+.table-filter th:first-child {
+  border-top-left-radius: 12px;
+}
+.table-filter th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.table-filter th:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.table-filter th{
+  @media (max-width: 768px) {
+    padding: 10px 13px;
+    font-size: 13px;
+  }
+}
+.table-filter
+.table-filter th i,
+.table-filter th mat-icon {
+  color: #404041;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  user-select: none;
 }
 
 .table-filter tbody tr {
@@ -101,10 +176,12 @@
   padding: 14px 15px;
   color: #333;
   font-size: 14px;
-  vertical-align: middle;
-  display: flex;
-  align-items: center;
+  @media (max-width: 768px) {
+    padding: 11px 13px;
+    font-size: 13px;
+  }
 }
+
 
 .table-filter td i,
 .table-filter td mat-icon {
@@ -125,21 +202,82 @@
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
 }
+.table-section {
+  width: 100%;
+  border-collapse: collapse; /* obrigatório — remove border-spacing */
+  margin-top: 3px;
+  margin-bottom: 0px;
 
-/* ===== RESPONSIVO ===== */
-@media (max-width: 768px) {
-  .table-filter {
-    position: static;
+  @media (max-width: 768px) {
     margin-top: 20px;
-    width: 100%;
-    right: auto;
-  }
-  
-  .table-filter * {
-    transform: none !important;
   }
 }
 
+/* Mata qualquer espaço residual dentro da tabela vazia */
+.table-section tr:empty,
+.table-section td:empty,
+.table-section tbody:empty {
+  display: none;
+  height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.clear-filters {
+  margin-top: 12px;
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+
+  @media (max-width: 768px) {
+    margin-top: 16px;
+    justify-content: center;
+  }
+
+  button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #555;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #888;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    background: #f5f5f5;
+    border-color: #ccc;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    mat-icon {
+      color: #555;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    background: #eeeeee;
+  }
+}
+}
 /* ===== ANGULAR MATERIAL ===== */
 .form-title {
   margin-bottom: 24px;
@@ -147,6 +285,11 @@
   color: #333;
   font-weight: 600;
   text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+  }
 }
 
 ::ng-deep .mat-mdc-text-field-wrapper {
@@ -164,67 +307,107 @@
   display: block;
 }
 
+/* ===== GRID DE EMPREENDIMENTOS ===== */
 .enterprises-section {
   display: grid;
-  /* Cria colunas de no mínimo 300px que se ajustam sozinhas */
   grid-template-columns: repeat(auto-fit, minmax(380px, 380px));
   gap: 20px;
   width: 100%;
-  justify-items: center; /* Centraliza o card dentro da célula do grid */
+  justify-items: center;
   padding-top: 50px;
+
+  // Desktop grande — 3 colunas livres
+  @media (max-width: 1280px) {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    justify-items: stretch;
+  }
+
+  // Tablet — 2 colunas
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding-top: 32px;
+  }
+
+  // Mobile — 1 coluna
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding-top: 24px;
+  }
 }
 
-/* Container do Card */
+/* ===== CARD ===== */
 .enterprise-card {
   display: flex;
   flex-direction: column;
   background: #ffffff;
   width: 100%;
   max-width: 100%;
-  border-radius: 12px; /* Cantos mais arredondados dão aspeto moderno */
-  overflow: hidden;    /* Garante que a imagem não saia dos cantos arredondados */
-  border: 1px solid #f0f0f0; /* Um contorno subtil ajuda na definição */
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transição fluida */
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   height: 100%;
 }
 
-/* Efeito de Hover (Elevação) */
 .enterprise-card:hover {
   cursor: pointer;
-  transform: translateY(-5px); /* Move ligeiramente para cima */
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1); /* Sombra mais suave e espalhada */
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
   border-color: #e0e0e0;
+
+  // Desativa o lift no touch (evita ficar "preso" no hover em mobile)
+  @media (hover: none) {
+    transform: none;
+    box-shadow: none;
+  }
 }
 
-/* Imagem do Empreendimento */
+/* Imagem */
 .enterprises-section img {
   width: 100%;
-  height: 250px; /* Reduzi um pouco para equilibrar o visual */
+  height: 250px;
   object-fit: cover;
   object-position: center;
   transition: transform 0.5s ease;
+
+  @media (max-width: 900px) {
+    height: 200px;
+  }
+
+  @media (max-width: 560px) {
+    height: 180px;
+  }
 }
 
-/* Efeito de Zoom na imagem ao passar o rato no card */
 .enterprise-card:hover img {
-  transform: scale(1.05);
+  transform: scale(1.01);
 }
 
 /* Cabeçalho */
 .enterprise-card mat-card-header {
   padding: 16px 20px 0;
   display: flex;
-  flex-direction: column; /* Título e subtítulo empilhados costumam ler-se melhor */
+  flex-direction: column;
   align-items: flex-start;
   gap: 4px;
+
+  @media (max-width: 560px) {
+    padding: 12px 14px 0;
+  }
 }
 
 /* Título */
 .enterprise-card mat-card-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #333333; /* Um cinza mais escuro para melhor contraste */
+  color: #333333;
   margin: 0;
+
+  @media (max-width: 560px) {
+    font-size: 1rem;
+  }
 }
 
 /* Subtítulo */
@@ -233,21 +416,34 @@
   font-weight: 500;
   color: #888888;
   margin-bottom: 8px;
+
+  @media (max-width: 560px) {
+    font-size: 0.82rem;
+  }
 }
 
-/* Conteúdo Central */
+/* Conteúdo */
 .enterprise-card mat-card-content {
   padding: 0 20px 20px;
   color: #666666;
-  line-height: 1.5; /* Melhora a legibilidade do texto */
+  line-height: 1.5;
+
+  @media (max-width: 560px) {
+    padding: 0 14px 14px;
+    font-size: 0.9rem;
+  }
 }
 
-/* Ações (Botões) no fundo */
+/* Ações */
 .enterprise-card mat-card-actions {
   display: flex;
   justify-content: flex-end;
   padding: 12px 20px;
-  background-color: #fafafa; /* Um fundo ligeiramente diferente destaca a área de ação */
-  margin-top: auto; 
+  background-color: #fafafa;
+  margin-top: auto;
   border-top: 1px solid #f0f0f0;
+
+  @media (max-width: 560px) {
+    padding: 10px 14px;
+  }
 }

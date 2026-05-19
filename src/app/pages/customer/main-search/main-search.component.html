@@ -1,9 +1,14 @@
+<!-- o pai só abre via #prompt.open(), sem bindings -->
+<app-permission-location #prompt />
+
+
 <div class="main-container">
   <div class="custom-card">
     <h2 class="form-title">Selecione uma Opção</h2>
 
     <div class="card-content-layout">
-      
+
+      <!-- Search -->
       <form class="search-section">
         <div class="header-search">
           <div class="header-content">
@@ -14,9 +19,7 @@
                      matInput
                      [formControl]="myControl"
                      [matAutocomplete]="auto">
-              
               <mat-icon matSuffix (click)="fillEnterprises()">search</mat-icon>
-              
               <mat-autocomplete #auto="matAutocomplete">
                 @for (option of filteredOptions | async; track option) {
                   <mat-option [value]="option">{{option}}</mat-option>
@@ -26,98 +29,185 @@
           </div>
 
           <div class="header-content">
-            <mat-icon class="filter-icon" 
-                      fontIcon="filter_alt" 
-                      (click)="toggleFilter()">
-            </mat-icon>
+            <mat-icon class="filter-icon" fontIcon="filter_alt" (click)="toggleFilter()"></mat-icon>
           </div>
           <div class="header-content">
-            <mat-icon class="filter-icon" 
-                      fontIcon="location_on" 
-                      (click)="getAddress()"
-                      >
-            </mat-icon>
+            <mat-icon class="filter-icon" fontIcon="location_on" (click)="prompt.open()"></mat-icon>
           </div>
         </div>
       </form>
-      <content class="enterprises-section">
-        @for (enterprise of enterprisesContent; track $index) {
-          <mat-card class="enterprise-card" appearance="outlined">
-            <mat-card-header>
-              <!-- <div mat-card-avatar class="example-header-image"></div> -->
-              <mat-card-title>{{enterprise.name}}</mat-card-title>
-            </mat-card-header>
-            <img mat-card-image src={{enterprise.filePublicUrl}} alt="Photo of a Shiba Inu">
-            <mat-card-content>
-              <p>
-                {{enterprise.description}}
-              </p>
-            </mat-card-content>
-            <mat-card-actions>
-              <button matButton>AGENDAR</button>
-              <button matButton><mat-icon>share</mat-icon></button>
-            </mat-card-actions>
-          </mat-card>
-      }
-      </content>
-      @if (toggle) {
-        
-        <div class="table-filter">
-          <table mat-table [dataSource]="filterData" class="mat-elevation-z0">
-            
-            <ng-container matColumnDef="service">
-              <th mat-header-cell *matHeaderCellDef>
-                <mat-icon class="icon-service">storefront</mat-icon>
-                Serviços
-              </th>
-              
-              <td mat-cell *matCellDef="let element">
-                <div class="cell-content">
-                  <span>{{element.service}}</span>
-                  
-                  <span class="selection-indicator">
-                    @if (clickedRows.has(element)) {
-                      <mat-icon color="primary">check_circle</mat-icon>
-                    } @else {
-                      <mat-icon class="icon-placeholder">radio_button_unchecked</mat-icon>
+
+      <!-- Cards + Filtros -->
+      <div class="content-with-filter">
+
+        <!-- Filtros -->
+        @if (filtersState.showPanel) {
+          <div class="table-filter">
+
+            <!-- Tabela Serviços -->
+            <table mat-table [dataSource]="serviceFilters" class="table-section">
+              <ng-container matColumnDef="service">
+                <th mat-header-cell *matHeaderCellDef (click)="toggleColumn('service')">
+                  <mat-icon class="icon-service">storefront</mat-icon>
+                  Serviços
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  @if (filtersState.showServiceColumn) {
+                    <div class="cell-content">
+                      <span>{{element.service}}</span>
+                      <span class="selection-indicator">
+                        @if (isRowSelected(element)) {
+                          <mat-icon color="primary">check_circle</mat-icon>
+                        } @else {
+                          <mat-icon class="icon-placeholder">radio_button_unchecked</mat-icon>
+                        }
+                      </span>
+                    </div>
+                  }
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="['service']"></tr>
+              <tr mat-row
+                  *matRowDef="let row; columns: ['service'];"
+                  (click)="selectedRow(row)"
+                  [class.selected-row]="isRowSelected(row)">
+              </tr>
+            </table>
+
+            <!-- Tabela Endereços -->
+            <table mat-table [dataSource]="ufFilters" class="table-section">
+              <ng-container matColumnDef="estados">
+                <th mat-header-cell *matHeaderCellDef (click)="toggleColumn('uf')">
+                  <mat-icon class="icon-service">map</mat-icon>
+                  Estados
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  @if (filtersState.showUfColumn) {
+                    <div class="cell-content">
+                      <span>{{element.uf}}</span>
+                      <span class="selection-indicator">
+                        @if (isRowSelected(element)) {
+                          <mat-icon color="primary">check_circle</mat-icon>
+                        } @else {
+                          <mat-icon class="icon-placeholder">radio_button_unchecked</mat-icon>
+                        }
+                      </span>
+                    </div>
+                  }
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="['estados']"></tr>
+              <tr mat-row
+                  *matRowDef="let row; columns: ['estados'];"
+                  (click)="selectedRow(row)"
+                  [class.selected-row]="isRowSelected(row)">
+              </tr>
+            </table>
+
+            <!-- Tabela Cidades (aparece apenas quando há UF selecionada) -->
+            @if (filtersState.showCityTable) {
+              <table mat-table [dataSource]="cityFiltersBackup" class="table-section">
+                <ng-container matColumnDef="cidades">
+                  <th mat-header-cell *matHeaderCellDef (click)="toggleColumn('city')">
+                    <mat-icon class="icon-service">map</mat-icon>
+                    Cidades
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    @if (filtersState.showCityColumn) {
+                      <div class="cell-content">
+                        <span>{{element.cityLabel || element.city}}</span>
+                        <span class="selection-indicator">
+                          @if (isRowSelected(element)) {
+                            <mat-icon color="primary">check_circle</mat-icon>
+                          } @else {
+                            <mat-icon class="icon-placeholder">radio_button_unchecked</mat-icon>
+                          }
+                        </span>
+                      </div>
                     }
-                  </span>
-                </div>
-              </td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row 
-                *matRowDef="let row; columns: displayedColumns;"
-                (click)="selectedRow(row)"
-                [class.selected-row]="clickedRows.has(row)">
-            </tr>
-          </table>
-
-          <div class="selected-logs">
-            @if (!clickedRows.size) {
-              <p class="hint-text">Nenhum serviço selecionado</p>
-            } @else {
-              <ul>
-                @for (clickedRow of clickedRows; track clickedRow) {
-                  <li><mat-icon>done</mat-icon> {{clickedRow.service}}</li>
-                }
-              </ul>
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="['cidades']"></tr>
+                <tr mat-row
+                    *matRowDef="let row; columns: ['cidades'];"
+                    (click)="selectedRow(row)"
+                    [class.selected-row]="isRowSelected(row)"
+                    [style.display]="filtersState.showCityColumn ? '' : 'none'">
+                </tr>
+              </table>
             }
-          </div>
-        </div>
-      }
 
-    <mat-paginator [length]="paginationUtils.length"
-              [pageSize]="paginationUtils.pageSize"
-              [pageIndex]="paginationUtils.pageIndex"
-              (page)="handlePageEvent($event)"
-              [pageSizeOptions]="paginationUtils.pageSizeOptions"
-              aria-label="Select page">
+            <!-- Tabela Endereços (aparece apenas quando há cidade selecionada) -->
+            @if (filtersState.showAddressTable) {
+              <table mat-table [dataSource]="addressFiltersBackup" class="table-section">
+                <ng-container matColumnDef="enderecos">
+                  <th mat-header-cell *matHeaderCellDef (click)="toggleColumn('address')">
+                    <mat-icon class="icon-service">map</mat-icon>
+                    Endereços
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    @if (filtersState.showAddressColumn) {
+                      <div class="cell-content">
+                        <span>{{element.addressLabel || element.address}}</span>
+                        <span class="selection-indicator">
+                          @if (isRowSelected(element)) {
+                            <mat-icon color="primary">check_circle</mat-icon>
+                          } @else {
+                            <mat-icon class="icon-placeholder">radio_button_unchecked</mat-icon>
+                          }
+                        </span>
+                      </div>
+                    }
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="['enderecos']"></tr>
+                <tr mat-row
+                    *matRowDef="let row; columns: ['enderecos'];"
+                    (click)="selectedRow(row)"
+                    [class.selected-row]="isRowSelected(row)"
+                    [style.display]="filtersState.showAddressColumn ? '' : 'none'">
+                </tr>
+              </table>
+            }
             
+            <div class="clear-filters">
+                <button (click)="clearFilters()" alt ="Limpar Filtros">
+                  <mat-icon>filter_alt_off</mat-icon>
+                </button>
+              </div>
+          </div>
+        }
+
+        <!-- Cards -->
+        <content class="enterprises-section">
+          @for (enterprise of enterprisesContent; track $index) {
+            <mat-card class="enterprise-card" appearance="outlined">
+              <mat-card-header>
+                <mat-card-title>{{enterprise.name}}</mat-card-title>
+              </mat-card-header>
+              <img mat-card-image src={{enterprise.filePublicUrl}} alt="Photo of a Shiba Inu">
+              <mat-card-content>
+                <p>{{enterprise.description}}</p>
+              </mat-card-content>
+              <mat-card-actions>
+                <button matButton>AGENDAR</button>
+                <button matButton><mat-icon>share</mat-icon></button>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </content>
+
+      </div>
+
+      <!-- Paginação -->
+      <mat-paginator [length]="paginationUtils.length"
+                     [pageSize]="paginationUtils.pageSize"
+                     [pageIndex]="paginationUtils.pageIndex"
+                     (page)="handlePageEvent($event)"
+                     [pageSizeOptions]="paginationUtils.pageSizeOptions"
+                     aria-label="Select page">
       </mat-paginator>
-  
-    </div> 
-    
+
+    </div>
   </div>
 </div>

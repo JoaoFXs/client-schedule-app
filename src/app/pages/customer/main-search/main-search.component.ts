@@ -1,33 +1,41 @@
-import { Component } from '@angular/core';
-import { map, Observable, startWith } from 'rxjs';
+import { Component, OnInit, OnDestroy, Input, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { OnInit } from '@angular/core';
+import { map, Observable, startWith, Subject, takeUntil } from 'rxjs';
+
 import { MainSearchService } from '../services/main-search.service';
-import { content, enterprise, filters } from '../interfaces/enterprise.model';
+import { content, enterprise, filterRequest, filters, Service, UF } from '../interfaces/enterprise.model';
 import { PaginationUtils } from '../../../_shared/utils/pagination-utils';
 import { Address } from '../../../_shared/interface/address.model';
 import { LocationService } from '../../../_shared/services/location/location.service';
+import { ColumnType } from '../enum/column-type';
+import { FiltersState } from '../interfaces/filter-state';
+
+// ─── Componente ──────────────────────────────────────────────────────────────
+
 @Component({
   selector: 'app-main-search',
   standalone: false,
   templateUrl: './main-search.component.html',
   styleUrl: './main-search.component.scss',
 })
-export class MainSearchComponent implements OnInit {
-  myControl = new FormControl();
-  options = new Set<number>();
+export class MainSearchComponent implements OnInit, OnDestroy {
 
-  toggle: boolean = false;
-  filteredOptions: Observable<string[]>;
-  enterprises: any[] = []; // Aqui você pode definir a estrutura do seu array de empresas
-  enterprisesContent: any[] = [];
-  ELEMENT_DATA: [] = [];
-  displayedColumns: string[] = ['service'];
-  filterData = this.ELEMENT_DATA;
-  clickedRows = new Set<filters>();
-  address?: Address;
-  loading = false;
-  error?: string;
+  // ── Lifecycle ──────────────────────────────────────────────────────────────
+
+  private destroy$ = new Subject<void>();
+
+  ngOnInit(): void {
+    this.fillFilters();
+    this.fillEnterprises();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // ── Construtor ─────────────────────────────────────────────────────────────
+
   constructor(
     private mainSearchService: MainSearchService,
     public paginationUtils: PaginationUtils,
@@ -39,105 +47,267 @@ export class MainSearchComponent implements OnInit {
     );
   }
 
-  ngOnInit() {
-    this.fillFilters();
-    this.fillEnterprises();
+  // ── Estado: Formulário ─────────────────────────────────────────────────────
+
+  myControl = new FormControl();
+  filteredOptions: Observable<string[]>;
+
+  // ── Estado: Dados ──────────────────────────────────────────────────────────
+
+  options           = new Set<number>();
+  enterprises       : enterprise[] = [];
+  enterprisesContent: enterprise[] = [];
+  displayedColumns  : string[]     = ['service', 'enderecos', 'cidades', 'estados'];
+
+  dataBackup  : filters[] = [];
+  filterData  : filters[] = [];
+  clickedRows = new Set<filters>();
+
+  // ── Estado: Filtros ────────────────────────────────────────────────────────
+
+  serviceFilters      : filters[] = [];
+  ufFilters           : filters[] = [];
+  cityFilters         : filters[] = [];
+
+  serviceFiltersBackup: filters[] = [];
+  ufFiltersBackup     : filters[] = [];
+  cityFiltersBackup   : filters[] = [];
+  addressFiltersBackup: filters[] = [];
+
+  originalCityFilters   : filters[] = [];
+  originalAddressFilters: filters[] = [];
+
+  // ── Estado: UI ────────────────────────────────────────────────────────────
+
+  filtersState: FiltersState = {
+    showPanel         : false,
+    showUfColumn      : false,
+    showServiceColumn : false,
+    showCityColumn    : false,
+    showCityTable     : false,
+    showAddressTable  : false,
+    showAddressColumn : false,
+  };
+
+  address?: Address;
+  @Input() loading = false;
+  error?  : string;
+
+  // ── Utilitários privados ───────────────────────────────────────────────────
+
+  /**
+   * Atualiza o estado dos filtros de forma imutável,
+   * garantindo detecção de mudanças correta pelo Angular.
+   */
+  private updateFiltersState(partial: Partial<FiltersState>): void {
+    this.filtersState = { ...this.filtersState, ...partial };
   }
 
   /**
-   * A função _filter() é responsável por filtrar a lista de empresas com base no valor de entrada fornecido pelo usuário. Ela converte o valor de entrada para minúsculas e, em seguida, filtra a lista de empresas, retornando apenas aquelas cujo serviço inclui o valor de entrada (também convertido para minúsculas). O resultado é uma lista de empresas que correspondem ao critério de pesquisa do usuário.
+   * Compara duas linhas de filtros pelos campos que identificam unicidade.
    */
+  private isSameRow(row1: filters, row2: filters): boolean {
+    return row1.city    === row2.city
+        && row1.uf      === row2.uf
+        && row1.service === row2.service
+        && row1.address === row2.address;
+  }
+
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.enterprises.filter(enterprise => enterprise.service.toLowerCase().includes(filterValue));
+    return this.enterprises
+      .filter(e => e.service.toLowerCase().includes(filterValue))
+      .map(e => e.service);
   }
 
-  /**
-   * A função selectedRow() é responsável por gerenciar a seleção de linhas na interface do usuário. Ela recebe um objeto do tipo 'filters' como parâmetro, que representa a linha selecionada. A função verifica se a linha já está presente no conjunto 'clickedRows'. Se estiver, ela remove a linha do conjunto; caso contrário, adiciona a linha ao conjunto. Isso permite que o usuário selecione ou desmarque linhas, e o estado das linhas selecionadas é mantido no conjunto 'clickedRows'.
-   */
-  selectedRow(row: filters) {
-    console.log('Linha selecionada:', row);
+  // ── Seleção de linhas ──────────────────────────────────────────────────────
 
-    this.clickedRows.has(row) ? this.clickedRows.delete(row) : this.clickedRows.add(row);
- 
-    console.log('Linhas selecionadas:', this.clickedRows);
+  isRowSelected(row: filters): boolean {
+    return [...this.clickedRows].some(r => this.isSameRow(r, row));
+  }
+
+  verifyRowSelection(row: filters): void {
+    if (this.isRowSelected(row)) {
+      this.clickedRows = new Set(
+        [...this.clickedRows].filter(r => !this.isSameRow(r, row))
+      );
+    } else {
+      this.clickedRows.add(row);
+    }
+  }
+
+  selectedRow(row: filters): void {
+    this.verifyRowSelection(row);
+    this.fillUF(this.clickedRows);
+    this.fillAddress(this.clickedRows);
     this.fillEnterprises();
   }
 
-  /**
-   * A função toggleFilter() é responsável por alternar a visibilidade dos filtros na interface do usuário. Ela inverte o valor booleano da variável 'toggle', que pode ser usada para mostrar ou esconder os filtros no template HTML.
-   */
-  toggleFilter(){
-    this.toggle = !this.toggle;
+  // ── Filtros: UF → Cidade → Endereço ───────────────────────────────────────
+
+  fillUF(clickedRows: Set<filters>): void {
+    const selectedUfs = [...clickedRows]
+      .map(r => r.uf)
+      .filter(uf => uf != null);
+
+    this.updateCityFiltersWithUF(selectedUfs);
   }
 
+  updateCityFiltersWithUF(selectedUfs: string[]): void {
+    if (selectedUfs.length > 0) {
+      this.updateFiltersState({ showCityTable: true });
 
-  /**
-   * Preenche a lista de filtros e empresas, além de configurar a paginação com base no total de empresas retornado pelo backend.
-   * A função fillFilters() busca os serviços disponíveis e os armazena em ELEMENT_DATA, que é usado para exibir os filtros.
-   */
-  fillFilters(){
-   this.mainSearchService.getAllServices().subscribe({
-      next: (data: any) => {
-        this.ELEMENT_DATA = data as []; 
-        this.filterData = [...this.ELEMENT_DATA];
-        console.log('Lista de filtros carregada:', this.ELEMENT_DATA);
-      },
-      error: (err) => {
-        console.error('Erro ao buscar dados do servidor:', err);
-      }
-    });
+      const validCities = this.dataBackup
+        .filter(e => selectedUfs.includes(e.uf))
+        .map(e => e.city);
+
+      this.cityFiltersBackup = this.originalCityFilters
+        .filter(e => validCities.includes(e.city))
+        .map(e => {
+          const uf = this.dataBackup.find(d => d.city === e.city)?.uf;
+          return { ...e, cityLabel: `${e.city} - ${uf}` };
+        });
+
+    } else {
+      this.updateFiltersState({ showCityTable: false, showCityColumn: false });
+      this.cityFiltersBackup = [...this.originalCityFilters];
+    }
   }
 
-  /**
-   *  A função fillEnterprises() busca as empresas com base na página atual e tamanho da página, atualiza a lista de empresas exibidas e configura a paginação.
-   */
-  fillEnterprises(){
-    console.log('Buscando empresas com os seguintes parâmetros: ');
-    console.log('Índice da página:', this.paginationUtils.pageIndex);
-    console.log('Tamanho da página:', this.paginationUtils.pageSize);
-    console.log('Filtros selecionados:', this.clickedRows);
-    console.log('Valor do campo de controle:', this.myControl.value);
-    this.mainSearchService.getAllEnterprises(this.paginationUtils.pageIndex, this.paginationUtils.pageSize, this.clickedRows, this.myControl.value).subscribe({
+  fillAddress(clickedRows: Set<filters>): void {
+    const selectedCities = [...clickedRows]
+      .map(r => r.city)
+      .filter(city => city != null);
+
+    this.updateAddressFiltersWithCity(selectedCities);
+  }
+
+  updateAddressFiltersWithCity(selectedCities: string[]): void {
+    if (selectedCities.length > 0) {
+      this.updateFiltersState({ showAddressTable: true });
+
+      const validAddress = this.dataBackup
+        .filter(e => selectedCities.includes(e.city))
+        .map(e => e.address);
+
+      this.addressFiltersBackup = this.originalAddressFilters
+        .filter(e => validAddress.includes(e.address))
+        .map(e => {
+          const found = this.dataBackup.find(d => d.address === e.address);
+          return {
+            ...e,
+            addressLabel: `${e.address}, ${found?.number} - ${found?.city} - ${found?.uf}`
+          };
+        });
+
+    } else {
+      this.updateFiltersState({ showAddressTable: false, showAddressColumn: false });
+      this.addressFiltersBackup = [...this.originalAddressFilters];
+    }
+  }
+
+  // ── Carga de dados ─────────────────────────────────────────────────────────
+
+  fillFilters(): void {
+    this.mainSearchService.getAllServices()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.dataBackup = data;
+
+          const uf      = data.map((item: any) => ({ uf:      item.uf      }));
+          const service = data.map((item: any) => ({ service: item.service  }));
+          const city    = data.map((item: any) => ({ city:    item.city    }));
+          const address = data.map((item: any) => ({ address: item.address  }));
+          const number  = data.map((item: any) => ({ number:  item.number   }));
+
+          this.filterData = [...service, ...uf, ...city, ...address, ...number];
+
+          this.serviceFiltersBackup = this.filterData
+            .filter(e => e.service != null)
+            .filter((e, i, arr) => arr.findIndex(x => x.service === e.service) === i);
+
+          this.ufFiltersBackup = this.filterData
+            .filter(e => e.uf != null)
+            .filter((e, i, arr) => arr.findIndex(x => x.uf === e.uf) === i);
+
+          this.cityFiltersBackup = this.filterData
+            .filter(e => e.city != null)
+            .filter((e, i, arr) => arr.findIndex(x => x.city === e.city) === i);
+
+          this.addressFiltersBackup = this.filterData
+            .filter(e => e.address != null)
+            .filter((e, i, arr) => arr.findIndex(x => x.address === e.address) === i);
+
+          this.originalAddressFilters = [...this.addressFiltersBackup];
+          this.originalCityFilters    = [...this.cityFiltersBackup];
+        },
+        error: (err) => console.error('Erro ao buscar dados do servidor:', err),
+      });
+  }
+
+  fillEnterprises(): void {
+    this.mainSearchService.getAllEnterprises(
+      this.paginationUtils.pageIndex,
+      this.paginationUtils.pageSize,
+      this.clickedRows,
+      this.myControl.value
+    )
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
       next: (data: any) => {
         this.enterprisesContent = data.content as enterprise[];
-        this.paginationUtils.length = data.totalElements;
+        this.paginationUtils.length   = data.totalElements;
         this.paginationUtils.pageSize = data.size;
         this.paginationUtils.setPageSizeOptions(this.paginationUtils.length);
-        console.log('Lista de empresas carregada:', this.enterprisesContent);
       },
-      error: (err) => {
-        console.error('Erro ao buscar dados do servidor:', err);
-      }
+      error: (err) => console.error('Erro ao buscar dados do servidor:', err),
     });
   }
 
-  /**
-   * O método handlePageEvent() é chamado quando o usuário interage com a paginação, atualizando os parâmetros de página e recarregando as empresas.
-   * @param event 
-   */
-  handlePageEvent(event: any) {
-    this.paginationUtils.pageIndex = event.pageIndex;
-    this.paginationUtils.pageSize = event.pageSize;
+  // ── Handlers de UI ────────────────────────────────────────────────────────
 
-    // Chamamos o backend novamente com os novos parâmetros
+  handlePageEvent(event: any): void {
+    this.paginationUtils.pageIndex = event.pageIndex;
+    this.paginationUtils.pageSize  = event.pageSize;
     this.fillEnterprises();
   }
-  
-   getAddress() {
-    this.loading = true;
-    this.error = undefined;
 
-    this.locationService.getCurrentAddress().subscribe({
-      next: addr => {
-        this.address = addr;
-        console.log('Endereço obtido:', this.address);
-        this.loading = false;
-      },
-      error: err => {
-        this.error = `Erro: ${err}`;
-        this.loading = false;
-      }
+  toggleFilter(): void {
+    this.updateFiltersState({ showPanel: !this.filtersState.showPanel });
+  }
+
+  toggleColumn(column: ColumnType): void {
+    if (column === 'uf') {
+      this.updateFiltersState({ showUfColumn: !this.filtersState.showUfColumn });
+      this.ufFilters = this.filtersState.showUfColumn ? this.ufFiltersBackup : [];
+
+    } else if (column === 'city') {
+      this.updateFiltersState({ showCityColumn: !this.filtersState.showCityColumn });
+
+    } else if (column === 'address') {
+      this.updateFiltersState({ showAddressColumn: !this.filtersState.showAddressColumn });
+
+    } else {
+      this.updateFiltersState({ showServiceColumn: !this.filtersState.showServiceColumn });
+      this.serviceFilters = this.filtersState.showServiceColumn ? this.serviceFiltersBackup : [];
+    }
+  }
+
+  clearFilters(): void {
+    this.clickedRows.clear();
+    this.updateFiltersState({
+      showCityTable     : false,
+      showAddressTable  : false,
+      showCityColumn    : false,
+      showAddressColumn : false,
+      showUfColumn      : false,
+      showServiceColumn : false,
     });
+    this.cityFiltersBackup    = [...this.originalCityFilters];
+    this.addressFiltersBackup = [...this.originalAddressFilters];
+    this.ufFilters      = this.filtersState.showUfColumn      ? this.ufFiltersBackup      : [];
+    this.serviceFilters = this.filtersState.showServiceColumn ? this.serviceFiltersBackup : [];
+    this.fillEnterprises();
   }
 }

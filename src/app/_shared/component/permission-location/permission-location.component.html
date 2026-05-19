@@ -1,0 +1,17 @@
+ <div *ngIf="showPrompt" class="overlay" (click)="onOverlayClick($event)">
+      <div class="card">
+
+        <div class="icon-circle">
+          <span class="material-icons">location_on</span>
+        </div>
+
+        <h3>Permitir acesso à localização?</h3>
+        <p>Usamos sua localização apenas para encontrar endereços próximos a você. Nenhum dado é armazenado.</p>
+
+        <div class="actions">
+          <button class="btn-primary" (click)="allow()">Sim, permitir</button>
+          <button class="btn-ghost"   (click)="deny()">Agora não</button>
+        </div>
+
+      </div>
+</div>

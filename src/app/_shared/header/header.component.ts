@@ -34,6 +34,14 @@ export class HeaderComponent implements OnInit{
     console.log("redirectLogin");
     this.router.navigate(['/login']);
   }
+  get userInitials(): string {
+    if (!this.username) return '?';
+    return this.username.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase();
+  }
 
+  redirectScheduling(){
+    console.log("redirectScheduling");
+    this.router.navigate(['/customer/main-search']);
+  }
 
 }

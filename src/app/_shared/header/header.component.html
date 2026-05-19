@@ -1,41 +1,63 @@
 <header>
   <mat-toolbar class="toolbar">
-    <button mat-icon-button class="icon"  [matMenuTriggerFor]="menu">
-          <mat-icon>menu</mat-icon>
-    </button>
-    <span>Sistema de Agendamento</span>
+
+    <div class="logo-area">
+      <div class="logo-dot">
+        <mat-icon>calendar_month</mat-icon>
+      </div>
+      <span class="logo-text">Agenda<span class="logo-accent">Pro</span></span>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <nav class="nav-links">
+      <button mat-button class="nav-btn">
+        <mat-icon>inventory_2</mat-icon> Planos
+      </button>
+      <button mat-button class="nav-btn" (click)="redirectScheduling()">
+        <mat-icon>alarm</mat-icon> Agendar
+      </button>
+    </nav>
+
     <span class="spacer"></span>
 
-    <mat-drawer-container class="drawer-container" autosize>
-          <mat-drawer #drawer class="drawer-content" mode="side">
-                <p class="username">{{username}}</p>
-                <p class="email">{{email}}</p>
-                <button mat-icon-button class="icon logout-btn" (click)="loginService.logout();drawer.toggle()">
-                   <mat-icon>logout</mat-icon>
-                </button>
-          </mat-drawer>  
-          <mat-drawer-content class="drawer-main-content">
-              @if(loginService.verifyIfLoggedIn()){
-                  <button mat-icon-button class="icon person-icon" (click)="drawer.toggle()">
-                    <mat-icon>person</mat-icon>
-                  </button>
-              }
-              @else {
-                  <button mat-icon-button class="icon person-icon" (click)="redirectLogin()">
-                    <mat-icon>person</mat-icon>
-                  </button>
-              }
-          </mat-drawer-content>
-    </mat-drawer-container>
-    
-    <button mat-icon-button class="icon share-icon">
-      <mat-icon>share</mat-icon>
-    </button>
-  </mat-toolbar>
+    <div class="right-actions">
 
-    <mat-menu #menu="matMenu" class="menu-drop">
-      <button mat-menu-item class="button-menu"><mat-icon>cases</mat-icon>Planos/Preços</button>
-      <button mat-menu-item class="button-menu"> <mat-icon>alarm</mat-icon>Quero Agendar</button>
-    </mat-menu>
+      <div class="rel">
+        <button mat-icon-button class="icon-btn" aria-label="Notificações">
+          <mat-icon>notifications</mat-icon>
+        </button>
+        <span class="notif-badge"></span>
+      </div>
+
+      <button mat-icon-button class="icon-btn share-icon" aria-label="Compartilhar">
+        <mat-icon>share</mat-icon>
+      </button>
+
+      <div class="toolbar-divider"></div>
+
+      <mat-drawer-container class="drawer-container" autosize>
+        <mat-drawer #drawer class="drawer-content" mode="over" [opened]="false">
+          <p class="username">{{ username }}</p>
+          <p class="email">{{ email }}</p>
+          <button mat-icon-button class="icon logout-btn" (click)="loginService.logout(); drawer.toggle()">
+            <mat-icon>logout</mat-icon>
+          </button>
+        </mat-drawer>
+        <mat-drawer-content class="drawer-main-content">
+          @if (loginService.verifyIfLoggedIn()) {
+            <button class="avatar-btn" (click)="drawer.toggle()" aria-label="Perfil">
+              {{ userInitials }}
+            </button>
+          } @else {
+            <button class="avatar-btn avatar-btn--guest" (click)="redirectLogin()" aria-label="Entrar">
+              <mat-icon style="font-size:18px; width:18px; height:18px;">person</mat-icon>
+            </button>
+          }
+        </mat-drawer-content>
+      </mat-drawer-container>
+
+    </div>
+  </mat-toolbar>
 
 </header>
