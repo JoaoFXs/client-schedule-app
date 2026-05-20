@@ -1,12 +1,12 @@
 import { Routes } from "@angular/router";
 import { NgModule } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { MainSearchComponent } from "./main-search.component";
+import { MainSearchComponent } from "./search.component";
 
 
 const routes: Routes = [
     {
-        path: 'main-search',
+        path: 'search',
         component: MainSearchComponent
     }
 ]

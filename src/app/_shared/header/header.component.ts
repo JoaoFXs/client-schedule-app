@@ -41,7 +41,7 @@ export class HeaderComponent implements OnInit{
 
   redirectScheduling(){
     console.log("redirectScheduling");
-    this.router.navigate(['/customer/main-search']);
+    this.router.navigate(['/scheduling/search']);
   }
 
 }

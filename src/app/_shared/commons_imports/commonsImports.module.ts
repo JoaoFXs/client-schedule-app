@@ -21,6 +21,7 @@ import {Component} from '@angular/core';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatCardModule} from '@angular/material/card';
+import { DatePickerModule } from "primeng/datepicker";
 @NgModule({
     declarations: [],
     imports: [CommonModule,
@@ -47,7 +48,8 @@ import {MatCardModule} from '@angular/material/card';
             /** Social Login Modules */
             GoogleSigninButtonModule,
             MatCardModule,
-            MatPaginatorModule
+            MatPaginatorModule,
+            DatePickerModule
               ],
     exports: [CommonModule, 
               RouterModule, 
@@ -70,7 +72,8 @@ import {MatCardModule} from '@angular/material/card';
             AsyncPipe,
             MatTableModule,
             MatCardModule,
-            MatPaginatorModule
+            MatPaginatorModule,
+            DatePickerModule
         ],
     providers: [
       provideNgxMask()]

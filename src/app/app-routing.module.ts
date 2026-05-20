@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { authGuard } from './_shared/guards/auth.guard';
 
+
 const routes: Routes = [
   {
     path: 'login',
@@ -12,8 +13,8 @@ const routes: Routes = [
     loadChildren: () => import('./pages/core/forgot-password/forgot-password.module').then(m => m.ForgotPasswordModule),
   },
   {
-    path: 'customer',
-    loadChildren: () => import('./pages/customer/main-search/main-search.module').then(m => m.MainSearchModule),
+    path: 'scheduling',
+    loadChildren: () => import('./pages/scheduling/search/search.module').then(m => m.MainSearchModule),
   }
 ];
 

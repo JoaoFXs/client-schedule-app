@@ -1,0 +1,111 @@
+<div class="overlay">
+  <div class="card">
+
+    <div class="image-card">
+      <div class="img-overlay"></div>
+      <span class="img-badge">Aberto agora</span>
+      <img src="https://www.bandab.com.br/wp-content/uploads/2025/09/novo-mcdonalds-bairro-alto-curitiba.jpg" alt="Imagem do estabelecimento">
+    </div>
+
+    <div class="content-card">
+      <h1>Nome Estabelecimento</h1>
+
+      <div class="info-icons">
+        <!-- Desktop: linhas com ícone + texto -->
+        <div class="icon-row" (click)="toggleInfo('toggleLocation')">
+          <div class="icon-circle"><mat-icon>location_on</mat-icon></div>
+          <div class="icon-label" *ngIf="toggleInfoCondition.toggleLocation">
+            <strong>Endereço</strong>Rua Exemplo, 123 — Barueri, SP
+          </div>
+        </div>
+        <div class="icon-row" (click)="toggleInfo('togglePhone')">
+          <div class="icon-circle"><mat-icon>phone</mat-icon></div>
+          <div class="icon-label" *ngIf="toggleInfoCondition.togglePhone">
+            <strong>Telefone</strong>(11) 1234-5678
+          </div>
+        </div>
+        <div class="icon-row" (click)="toggleInfo('toggleHours')">
+          <div class="icon-circle"><mat-icon>access_time</mat-icon></div>
+          <div class="icon-label" *ngIf="toggleInfoCondition.toggleHours">
+            <strong>Horário</strong>Seg–Sex, 09:00–18:00
+          </div>
+        </div>
+        <div class="icon-row" (click)="toggleInfo('toggleEmail')">
+          <div class="icon-circle"><mat-icon>email</mat-icon></div>
+          <div class="icon-label" *ngIf="toggleInfoCondition.toggleEmail">
+            <strong>E-mail</strong>exemplo@barbearia.com
+          </div>
+        </div>
+        <div class="icon-row" (click)="toggleInfo('toggleWebsite')">
+          <div class="icon-circle"><mat-icon>web</mat-icon></div>
+          <div class="icon-label" *ngIf="toggleInfoCondition.toggleWebsite">
+            <strong>Site</strong>www.barberexemplo.com
+          </div>
+        </div>
+        <div class="icon-row" (click)="toggleInfo('toggleDuration')">
+          <div class="icon-circle"><mat-icon>timer</mat-icon></div>
+          <div class="icon-label" *ngIf="toggleInfoCondition.toggleDuration">
+            <strong>Duração</strong>30 minutos
+          </div>
+        </div>
+
+        <!-- Mobile: botões compactos -->
+        <button class="icon-btn" (click)="toggleInfo('toggleLocation')">
+          <div class="icon-circle"><mat-icon>location_on</mat-icon></div>Endereço
+        </button>
+        <button class="icon-btn" (click)="toggleInfo('togglePhone')">
+          <div class="icon-circle"><mat-icon>phone</mat-icon></div>Telefone
+        </button>
+        <button class="icon-btn" (click)="toggleInfo('toggleHours')">
+          <div class="icon-circle"><mat-icon>access_time</mat-icon></div>Horário
+        </button>
+        <button class="icon-btn" (click)="toggleInfo('toggleEmail')">
+          <div class="icon-circle"><mat-icon>email</mat-icon></div>E-mail
+        </button>
+        <button class="icon-btn" (click)="toggleInfo('toggleWebsite')">
+          <div class="icon-circle"><mat-icon>web</mat-icon></div>Site
+        </button>
+        <button class="icon-btn" (click)="toggleInfo('toggleDuration')">
+          <div class="icon-circle"><mat-icon>timer</mat-icon></div>Duração
+        </button>
+      </div>
+
+      <div class="calendar-section">
+        <span class="section-label">Selecione uma data</span>
+        <div class="calendar-trigger">
+          <mat-icon class="cal-icon">calendar_today</mat-icon>
+          <span class="cal-text">{{ date ? (date | date:'dd/MM/yyyy') : 'Escolha a data' }}</span>
+          <mat-icon class="cal-arrow">expand_more</mat-icon>
+                    <p-datepicker [(ngModel)]="date" [inline]="false" styleClass="hidden-datepicker">
+              <ng-template #dayCell let-dayData>
+                <strong *ngIf="dayData.day > 10 && dayData.day < 15; else elseBlock"
+                  style="text-decoration: line-through">{{ dayData.day }}</strong>
+                <ng-template #elseBlock>{{ dayData.day }}</ng-template>
+              </ng-template>
+        </p-datepicker>
+   
+           </div>
+
+      </div>
+
+      <div class="calendar-section">
+        <span class="section-label">Horários disponíveis</span>
+        <div class="times-grid">
+          @for (item of ['10:00', '11:00', '14:00', '15:00', '16:00']; track $index) {
+            <span class="time-chip"
+              [class.selected]="selectedTime === item"
+              (click)="selectedTime = item">
+              {{ item }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-secondary">Cancelar</button>
+        <button class="btn btn-primary">Agendar</button>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,204 @@
+* {
+  margin: 0; padding: 0; box-sizing: border-box;
+  font-family: 'Inter', 'Roboto', sans-serif;
+}
+mat-icon {
+  font-family: 'Material Icons' !important;
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+  line-height: 20px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  color: #555;
+}
+
+.icon-circle {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: #f0f0f0;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+
+  mat-icon {
+    font-size: 18px !important;
+    width: 18px !important;
+    height: 18px !important;
+    line-height: 18px !important;
+    color: #444;
+  }
+}
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 16px;
+}
+
+.card {
+  display: flex; flex-direction: row;
+  background: #fff;
+  border-radius: 20px; overflow: hidden;
+  width: 100%; max-width: 860px; min-height: 520px;
+
+  .image-card {
+    flex: 0 0 42%;
+    position: relative; overflow: hidden;
+
+    img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, transparent 50%, rgba(0,0,0,0.4) 100%);
+    }
+
+    .img-badge {
+      position: absolute; top: 16px; left: 16px;
+      background: rgba(255,255,255,0.93);
+      color: #27500A; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 99px;
+      border: 1px solid rgba(63,153,34,0.25);
+    }
+  }
+
+  &:hover .image-card img { transform: scale(1.04); }
+
+  .content-card {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 28px 24px 20px; overflow-y: auto; gap: 16px;
+
+    h1 {
+      font-size: 20px; font-weight: 700;
+      color: #111; letter-spacing: -0.3px;
+    }
+  }
+}
+
+/* ── Info icons ── */
+.info-icons {
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.icon-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 10px; border-radius: 10px;
+  transition: background 0.15s;
+
+  &:hover { background: #f5f5f5; }
+  &:hover .icon-circle { background: #e8e8e8; color: #111; }
+}
+
+.icon-circle {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: #f0f0f0;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 16px; color: #444;
+  transition: background 0.2s, color 0.2s;
+
+  mat-icon { font-size: 17px; width: 17px; height: 17px; }
+}
+
+.icon-label {
+  font-size: 13px; color: #555; line-height: 1.3;
+
+  strong {
+    display: block; font-size: 11px; color: #999;
+    font-weight: 500; margin-bottom: 1px;
+  }
+}
+
+/* Botões mobile (ficam ocultos no desktop) */
+.icon-btn { display: none; }
+
+/* ── Calendário ── */
+.calendar-section {
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.section-label {
+  font-size: 11px; font-weight: 600; color: #999;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+.calendar-trigger {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 12px;
+  border: 1px solid #e5e5e5; background: #fafafa;
+  cursor: pointer; position: relative;
+  transition: border-color 0.2s, background 0.2s;
+
+  &:hover { border-color: #bbb; background: #f3f3f3; }
+
+  mat-icon { font-size: 20px; color: #555; }
+
+  .cal-text { flex: 1; font-size: 13px; color: #333; }
+  .cal-arrow { font-size: 14px; color: #aaa; }
+
+  input[type="date"] {
+    position: absolute; inset: 0; opacity: 0;
+    cursor: pointer; width: 100%;
+  }
+}
+
+/* ── Horários ── */
+.times-grid {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+
+.time-chip {
+  padding: 6px 14px; border-radius: 8px;
+  border: 1px solid #e5e5e5; background: #fff;
+  font-size: 12px; font-weight: 500; color: #333;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+
+  &:hover, &.selected {
+    background: #111; color: #fff; border-color: #111;
+  }
+}
+
+/* ── Ações ── */
+.actions {
+  display: flex; gap: 8px; margin-top: auto; padding-top: 4px;
+}
+
+.btn {
+  flex: 1; padding: 10px 0;
+  border-radius: 10px; border: none;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+
+  &:active { transform: scale(0.98); }
+
+  &.btn-primary { background: #111; color: #fff; &:hover { opacity: 0.85; } }
+  &.btn-secondary { background: #f0f0f0; color: #555; &:hover { background: #e5e5e5; } }
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .card { flex-direction: column; }
+  .image-card { flex: 0 0 200px; }
+  .content-card { padding: 20px 16px 16px; }
+
+  .icon-row { display: none; }
+
+  .icon-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border-radius: 10px;
+    border: 1px solid #e5e5e5; background: #fafafa;
+    cursor: pointer; font-size: 13px; color: #444;
+    font-family: inherit;
+    transition: background 0.15s;
+
+    &:hover { background: #f0f0f0; }
+  }
+
+  .info-icons { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+}

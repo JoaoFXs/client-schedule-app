@@ -15,8 +15,8 @@ import { FiltersState } from '../interfaces/filter-state';
 @Component({
   selector: 'app-main-search',
   standalone: false,
-  templateUrl: './main-search.component.html',
-  styleUrl: './main-search.component.scss',
+  templateUrl: './search.component.html',
+  styleUrl: './search.component.scss',
 })
 export class MainSearchComponent implements OnInit, OnDestroy {
 
